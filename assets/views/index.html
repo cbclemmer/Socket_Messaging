@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Message.io
+        </title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="/css/main.css" type="text/css" />
+    </head>
+    <body ng-app="app">
+        <script type="text/javascript" src="/js/depend/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/depend/angular.min.js"></script>
+        <script type="text/javascript" src="/js/depend/socket.io.js"></script>
+        <script type="text/javascript" src="/js/app.sockets.js"></script>
+        <script type="text/javascript" src="/js/app.jquery.js"></script>
+        <script type="text/javascript" src="/js/app.angular.js"></script>
+        <div id="Err"></div>
+        <div id="Info"></div>
+        <div id="login" ng-hide="auth" ng-controller="loginController as log">
+            <form ng-submit="log.login(log.temp.user, log.temp.pass)">
+                <input type="text" placeholder="Username" ng-model="log.temp.user" /><br>
+                <input type="password" placeholder="Password" ng-model="log.temp.pass" />
+            </form>
+            <br>
+            <span style="color: blue;cursor: pointer" ng-click="log.toggleSign()">Sign Up</span>
+            <form ng-show="signUp" ng-submit="log.signUp(log.temp.sUser, log.temp.sEmail, log.temp.sPass, log.temp.sCpass)">
+                <input type="text" placeholder="Username" ng-model="log.temp.sUser" /><br>
+                <input type="email" placeholder="Email" ng-model="log.temp.sEmail" /><br>
+                <input type="password" placeholder="Password" ng-model="log.temp.sPass" /><br>
+                <input type="password" placeholder="Confirm Password" ng-model="log.temp.sCpass" /><br>
+                <input type="submit" value="sign up"/>
+            </form>
+        </div>
+    </body>
+</html>
