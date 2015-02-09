@@ -49,6 +49,12 @@ $(document).ready(function(){
 			$("#shadow").fadeOut('fast');
 		});
 	});
+	$("#sideNav").click(function(){
+		$("#sideNav").animate({left: "-20%"}, 200, function(){
+			$("#sideNav").hide();
+			$("#shadow").fadeOut('fast');
+		});
+	});
 	$("#searchBar").keyup(function(){
 		if($("#searchBar").val()!=""){
 			$("#searchResults").slideDown();

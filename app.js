@@ -4,18 +4,18 @@ var login = require("./controllers/loginController.js");
 var express = require("express"),
     app = express(),
     socket = require("socket.io"),
-    cons = require("consolidate"),
+    //cons = require("consolidate"),
     server = require("http").Server(app),
     io = require("socket.io")(server);
 
 //express
-app.engine('html', cons.swig);
-app.set('view engine', 'html');
-app.set('views', __dirname + "/assets/views");
+app.set('views', __dirname + '/assets/views');
 app.use(express.static(__dirname+'/assets'));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'ejs');
 
 app.get('/', function(req, res){
-    res.render('index');
+    res.render('index.html');
 });
 
 db.mongoclient.open(function(err, mongoclient) {
@@ -41,10 +41,14 @@ io.on('connection', function(socket){
     socket.on("login", function(data){
         console.log("login");
         login.login(data, function(data){
-            //if there was an error pass it back to client
-            if(data.err) return socket.emit('login', data);
-            //if everything worked out
             socket.emit('login', data);
+        });
+    });
+    socket.on("logout", function(data){
+        console.log("logout");
+        login.logout(data, function(data){
+            if(data.err) return socket.emit('login', data);
+            socket.emit('logout', data);
         });
     });
 });

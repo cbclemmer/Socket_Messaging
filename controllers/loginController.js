@@ -40,6 +40,15 @@ module.exports = {
                 }); 
             });
         });
+    },logout: function(data, cb){
+        var Session = db.db.collection('session');
+        Session.remove({cookie: data}, function(err, sess){
+            if(err) throw err;
+            if(sess)
+                return cb({status: true});
+            else
+                return cb({err: "Not logged in"});
+        });
     },auth: function(data, cb){
         console.log("Authenticating");
         db.db.collection('session').findOne({cookie: data}, function(err, ses){

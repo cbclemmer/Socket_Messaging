@@ -6,7 +6,7 @@
         });
     });
 
-    app.controller("userController", ['$scope', '$rootScope', function(s, rs){
+    app.controller("userController", ['$scope', '$rootScope', 'socket', function(s, rs, socket){
         rs.auth = false;
         this.hi = "hello";
     }]);
@@ -40,6 +40,9 @@
                 showErr("Passwords do not match")
             }
         };
+        this.logout = function(){
+            socket.emit("logout", getCookie("auth"));
+        };
         this.toggleSign = function(){
             rs.signUp = !rs.signUp;
         }
@@ -60,8 +63,15 @@
             if(data.err) return showErr(data.err);
             showInfo("Logged in");
             rs.user = data.status;
+            rs.auth = true;
             document.cookie = "auth="+data.cookie;
             console.log(s);
+        });
+        socket.on("logout", function(data){
+            if(data.err) return showErr(data.err);
+            rs.user = {};
+            rs.auth = false;
+            document.cookie = "auth=";
         });
     }]);
 })();

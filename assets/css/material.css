@@ -57,20 +57,19 @@ input[type="text"] {
 input[type="text"]:focus {
   	outline: 0;
 }
-input[type="text"]::-webkit-input-placeholder {
-   color: #FFEB3B
-;
+.top input[type="text"]::-webkit-input-placeholder {
+   color: #FFEB3B;
 }
 
-input[type="text"]:-moz-placeholder { /* Firefox 18- */
+.top input[type="text"]:-moz-placeholder { /* Firefox 18- */
    color: #FFEB3B;  
 }
 
-input[type="text"]::-moz-placeholder {  /* Firefox 19+ */
+.top input[type="text"]::-moz-placeholder {  /* Firefox 19+ */
    color: #FFEB3B;  
 }
 
-input[type="text"]:-ms-input-placeholder {  
+.top input[type="text"]:-ms-input-placeholder {  
    color: #FFEB3B;  
 }
 /*
