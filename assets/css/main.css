@@ -1,0 +1,33 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+/* Notification area */
+#not {
+    width: 100%;
+    position: absolute;
+    Font-family: Roboto;
+    font-size: 20pt;
+}
+#Err {
+	display: none;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    color: white;
+    background-color: #F44336;
+    text-align: center;
+    height: 50px;
+    padding-top: 10px;
+}
+#Info {
+	display: none;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    padding-top: 10px;
+    color: white;
+    background-color: #2196F3;
+    text-align: center;
+    height: 50px;
+}

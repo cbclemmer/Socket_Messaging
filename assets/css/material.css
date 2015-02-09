@@ -1,0 +1,352 @@
+/*
+	Fonts
+=============
+*/
+@font-face {
+	font-family: Roboto;
+	src: url(../fonts/RobotoTTF/Roboto-Regular.ttf);
+	font-style: normal;
+}
+@font-face {
+	font-family: Crimson;
+	src: url(../fonts/Crimson_Text/CrimsonText-Roman.ttf);
+	font-style: normal;
+}
+/*
+	Reset
+=============
+*/
+* {
+	padding: 0px;
+	margin: 0px;
+}
+/*
+	General structures
+==========================
+*/
+body {
+	background-color: rgba(0,0,0, .12);
+	opacity: 12%;
+	font-family: Roboto;
+	background-size: 100% auto;
+}
+h1 {
+	font-size: 36pt;
+	color: #2196F3;
+}
+button, select {
+	text-transform: none; 
+}
+img {
+	margin: 20px 0px 20px 0px;
+	width: 100%;
+	opacity: 1;
+}
+span {
+	opacity: .87;
+}
+/*
+	input
+=============
+*/
+input[type="text"] {
+	border: 0px;
+	font-size: 20pt;
+	color: rgba(255,255,255, .9);
+}
+input[type="text"]:focus {
+  	outline: 0;
+}
+input[type="text"]::-webkit-input-placeholder {
+   color: #FFEB3B
+;
+}
+
+input[type="text"]:-moz-placeholder { /* Firefox 18- */
+   color: #FFEB3B;  
+}
+
+input[type="text"]::-moz-placeholder {  /* Firefox 19+ */
+   color: #FFEB3B;  
+}
+
+input[type="text"]:-ms-input-placeholder {  
+   color: #FFEB3B;  
+}
+/*
+	ID
+============
+
+	Applies to all pages
+===========================
+*/
+#searchBar {
+	background-color: #2196F3;
+	border-bottom: 2px solid #42A5F5;
+	position: relative;
+	top: -200px;
+	display: none;
+}
+#searchResults {
+	width: 30%;
+	height: 150px;
+	background-color: white;
+	z-index: 10;
+	position: fixed;
+	top: 175px;
+	right: 0px;
+	box-shadow: -1px 3px 3px grey;
+	display: none;
+	z-index: 14;
+}
+#searchResults div {
+	width: 100%;
+	padding-left: 10%;
+	border-bottom: 1px solid rgba(0, 0, 0, .12);
+	padding-top: 10px;
+	padding-bottom: 10px;
+	overflow: hidden;
+}
+#searchResults div span {
+	opacity: .54;
+}
+#shadow {
+	display: none;
+	background-color: black;
+	opacity: .7;
+	width: 100%;
+	position: fixed;
+	z-index: 15;
+	top: 0px;
+	left: 0px;
+}
+#sideNav {
+	display: none;
+	background-color: white;
+	z-index: 20;
+	width: 20%;
+	margin-left: 0%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	box-shadow: 3px 3px 3px grey;
+	font-family: Roboto;
+	font-size: 20pt;
+}
+#sideNav ul li{
+	margin: 10px auto 20px 0px;
+	list-style-type: none;
+	cursor: pointer;
+	padding-left: 10%;
+	opacity: .54;
+}
+.notInline {
+	margin: 0;
+	width: auto;
+	width: 48px;
+	width: 48px;
+	cursor: pointer;
+	position: relative;
+	top: 15px;
+}
+.topRight {
+	float: right;
+}
+.iconButton {
+	background: transparent center center no-repeat;
+	background-size: 24px 24px;
+	border: 0px;
+	height: 48px;
+	width: 48px;
+	cursor: pointer;
+}
+.hamburger {
+	background-image: url(../icons/hamburger.svg);
+}
+#menuButton {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+}
+.top {
+	height: 75px;
+	background-color: #2196F3;
+	width: 95%;
+	color: white;
+	font-size: 34pt;
+	padding-left: 5%;
+	padding-top: 100px;
+	z-index: 10;
+}
+/*
+	Home specific
+====================
+*/
+#friendsSearch {
+	background-color: #2196F3;
+	border-bottom: 2px solid #42A5F5;
+	position: relative;
+}
+#newPost {
+	width: 80%;
+	height: 200px;
+	margin-left: 10%;
+	position: fixed;	
+	background-color: white;
+	box-shadow: 3px 3px 3px grey;
+	display: none;
+	z-index: 8;
+}
+#newPost textarea {
+	border: 0;
+	width: 90%;
+	height: 185px;
+	margin-left: 5%;
+	margin-top: 15px;
+	font-size: 20px;
+	font-family: Crimson;
+	line-height: 1.4;
+	resize: none;
+}
+#newPost textarea:focus {
+	outline: 0;
+}
+#newPostButton {
+	color: #FFEB3B;
+	display: inline-block;
+	font-family: Roboto;
+	font-size: 34pt;
+	cursor: pointer;
+}
+#aboutButton {
+	display: inline-block;
+}
+#aboutDiv {
+	width: 20%;
+	height: 80px;
+	box-shadow: 3px 3px 3px grey;
+	position: fixed;
+	background-color: rgba(0,0,0, .12);
+	display: none;
+}
+.aboutDivOption{
+	margin-top: 10px;
+	color: black;
+	font-family: Roboto;
+	font-size: 24pt;
+	width: 100%;
+	text-align: center;
+	padding-top: 10px;
+	cursor: pointer;
+	padding-bottom: 20px;
+	background-color: rgba(255,255,255,1);
+}
+.aboutDivOption:hover{
+	background-color: rgba(255,255,255,.9);
+}
+#friendsDiv {
+	width: 70%;
+	height: 700px;
+	position: absolute;
+	margin-left: 25%;
+	margin-top: 50px;
+	background-color: white;
+	box-shadow: 3px 3px 3px grey;
+	display: none;
+	z-index: 10;
+}
+.optionTop {
+	width: 100%;
+	background-color: #2196F3;
+	padding-bottom: 30px;
+}
+.optionTop h1{
+	padding-left: 40%;
+	padding-top: 10px;
+	color: white;
+}
+.optionTop input {
+	margin-left: 5%;
+}
+#friendsResults {
+	width: 100%;
+	display: block;
+}
+#friendsResults div {
+	width: 90%;
+	padding-left: 10%;
+	border-bottom: 1px solid rgba(0, 0, 0, .12);
+	padding-top: 10px;
+	padding-bottom: 10px;
+	overflow: hidden;
+	cursor: pointer;
+}
+#friendsExit {
+	float: right;
+	font-size: 24pt;
+	margin-right: 20px;
+	margin-top: 20px;
+	cursor: pointer;
+	color: #FFEB3B;
+}
+.post {
+	margin-top: 20px;
+	width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: white;
+	padding: 20px;
+	box-shadow: 3px 3px 3px grey;
+	z-index: 1;
+}
+.postTop {
+	font-size: 20px;
+}
+.postVis {
+	float: right;
+	position: relative;
+	top: -15px;
+	width: 30px;
+	z-index: 1;
+}
+.postContent {
+	font-family: Crimson;
+	font-size: 20px;
+}
+/*
+	Article specific
+=======================
+*/
+.bigPic {
+	position: fixed;
+}
+.bigPic img {
+	margin-top: 0px;
+}
+.overPic {
+	color: white;
+	font-family: Roboto;
+	font-size: 34pt;
+	margin: 30px 20% 0px auto;
+	display: inline-block;
+}
+.main {
+	padding-top: 30px;
+	background-color: white;
+	width: 100%;
+}
+.article {
+	width: 700px;
+	margin-right: auto;
+	margin-left: auto;
+	font-family: Crimson;
+	font-size: 20pt;
+	line-height: 1.4;
+}
+
+@media screen and (max-width: 800px) {
+	.main div {
+		width: 500px;
+		font-size: 16px;
+	}
+}

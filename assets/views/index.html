@@ -5,31 +5,99 @@
             Message.io
         </title>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="/css/material.css" type="text/css" />
         <link rel="stylesheet" href="/css/main.css" type="text/css" />
     </head>
     <body ng-app="app">
         <script type="text/javascript" src="/js/depend/jquery.min.js"></script>
         <script type="text/javascript" src="/js/depend/angular.min.js"></script>
+        <script type="text/javascript" src="/js/depend/socket.min.js"></script>
         <script type="text/javascript" src="/js/depend/socket.io.js"></script>
+        <script type="text/javascript" src="/js/material.js"></script>
         <script type="text/javascript" src="/js/app.sockets.js"></script>
         <script type="text/javascript" src="/js/app.jquery.js"></script>
         <script type="text/javascript" src="/js/app.angular.js"></script>
-        <div id="Err"></div>
-        <div id="Info"></div>
+        <div id="not">
+            <div id="Err">This is an Err preview</div>
+            <div id="Info"></div>
+        </div>
         <div id="login" ng-hide="auth" ng-controller="loginController as log">
-            <form ng-submit="log.login(log.temp.user, log.temp.pass)">
-                <input type="text" placeholder="Username" ng-model="log.temp.user" /><br>
+            <form ng-submit="log.login(log.temp.email, log.temp.pass)">
+                <input type="email" placeholder="Email" ng-model="log.temp.email" /><br>
                 <input type="password" placeholder="Password" ng-model="log.temp.pass" />
+                <input type="submit" value="login"/>
             </form>
             <br>
             <span style="color: blue;cursor: pointer" ng-click="log.toggleSign()">Sign Up</span>
             <form ng-show="signUp" ng-submit="log.signUp(log.temp.sUser, log.temp.sEmail, log.temp.sPass, log.temp.sCpass)">
-                <input type="text" placeholder="Username" ng-model="log.temp.sUser" /><br>
                 <input type="email" placeholder="Email" ng-model="log.temp.sEmail" /><br>
+                <input type="text" placeholder="Username" ng-model="log.temp.sUser" /><br>
+                <input type="text" placeholder="Name" ng-model="log.temp.sName" /><br>
                 <input type="password" placeholder="Password" ng-model="log.temp.sPass" /><br>
                 <input type="password" placeholder="Confirm Password" ng-model="log.temp.sCpass" /><br>
                 <input type="submit" value="sign up"/>
             </form>
         </div>
+        <div class="top" ng-controller="userController as use">
+			<button class="iconButton hamburger" id="menuButton"></button>
+			{{user.name}} @{{signUp}}
+			<div id="aboutButton"><img src="icons/details.png" class="notInline" /></div>
+			<div id="newPostButton">+</div>
+			&emsp;
+			<div class="topRight">
+				{{12}}
+				<input type="text" ng-model="use.search" placeholder="Search..." id="searchBar"/>
+				<img src="icons/search.png" class="notInline search" id="search"></img>
+			</div>
+		</div>
+		<div id="searchResults">
+			<div>name <span>@username</span></div>
+			<div>name <span>@username</span></div>
+			<div>name <span>@username</span></div>
+		</div>
+		<div id="newPost">
+			<textarea placeholder="Write to @username"></textarea>
+		</div>
+		<div id="aboutDiv">
+			<div class="aboutDivOption" id="aboutFriends">Friends</div>
+		</div>
+		<div id="shadow"></div>
+		<div id="sideNav">
+			<ul>
+				<li><img src="icons/home.png" class="notInline">&emsp;Home</li>
+				<li><img src="icons/feed.png" class="notInline">&emsp;Feed</li>
+				<li><img src="icons/logout.png" class="notInline">&emsp;Logout</li>
+			</ul>
+		</div>
+		<div id="friendsDiv">
+				<div class="optionTop">
+					<span id="friendsExit">X</span>
+					<h1>Friends</h1>
+					<input type="text" placeholder="Search for Friends" id="friendsSearch"/>
+				</div>
+				<div id="friendsResults">
+					<div>name <span>@username</span></div>
+					<div>name <span>@username</span></div>
+					<div>name <span>@username</span></div>
+				</div>
+		</div>
+		<div class="posts">
+			<div class="post">
+					<div class="postTop"><b>Name</b> <span>@username</span><img src="icons/visable-black.png" class="notInline postVis" /></div><br>
+				<div class="postContent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vel dapibus felis. Maecenas faucibus, nunc vitae vehicula imperdiet, odio nibh cursus velit, nec dignissim ex nulla ut ligula. Sed pharetra vitae dui id feugiat. Curabitur nec lobortis magna, sed maximus leo. Nunc risus massa, egestas quis nibh et, ullamcorper dictum dolor. Fusce sit amet tellus eu lectus finibus sodales. Aliquam a sapien non quam ornare hendrerit quis vel odio. Cras varius lacus tristique, tristique lacus id, dapibus erat. Aliquam sed vulputate nunc, nec fermentum turpis. Donec rhoncus vulputate eros id ornare. Donec venenatis ipsum quam, sed bibendum tellus vulputate sed. Donec vestibulum diam nibh, vitae dapibus massa vehicula in. Aliquam imperdiet viverra enim, in eleifend dui efficitur ac. Suspendisse varius orci eu sollicitudin dignissim. In sed eleifend nulla, at venenatis erat. Phasellus faucibus, nisi ut sodales dignissim, libero velit imperdiet nisl, aliquam consectetur sem massa vitae turpis.</div>
+			</div>
+			<div class="post">
+					<div class="postTop"><b>Name</b> <span>@username</span><img src="icons/visable-black.png" class="notInline postVis" /></div><br>
+				<div class="postContent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vel dapibus felis. Maecenas faucibus, nunc vitae vehicula imperdiet, odio nibh cursus velit, nec dignissim ex nulla ut ligula. Sed pharetra vitae dui id feugiat. Curabitur nec lobortis magna, sed maximus leo. Nunc risus massa, egestas quis nibh et, ullamcorper dictum dolor. Fusce sit amet tellus eu lectus finibus sodales. Aliquam a sapien non quam ornare hendrerit quis vel odio. Cras varius lacus tristique, tristique lacus id, dapibus erat. Aliquam sed vulputate nunc, nec fermentum turpis. Donec rhoncus vulputate eros id ornare. Donec venenatis ipsum quam, sed bibendum tellus vulputate sed. Donec vestibulum diam nibh, vitae dapibus massa vehicula in. Aliquam imperdiet viverra enim, in eleifend dui efficitur ac. Suspendisse varius orci eu sollicitudin dignissim. In sed eleifend nulla, at venenatis erat. Phasellus faucibus, nisi ut sodales dignissim, libero velit imperdiet nisl, aliquam consectetur sem massa vitae turpis.</div>
+			</div>
+			<div class="post">
+					<div class="postTop"><b>Name</b> <span>@username</span><img src="icons/visable-black.png" class="notInline postVis" /></div><br>
+				<div class="postContent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vel dapibus felis. Maecenas faucibus, nunc vitae vehicula imperdiet, odio nibh cursus velit, nec dignissim ex nulla ut ligula. Sed pharetra vitae dui id feugiat. Curabitur nec lobortis magna, sed maximus leo. Nunc risus massa, egestas quis nibh et, ullamcorper dictum dolor. Fusce sit amet tellus eu lectus finibus sodales. Aliquam a sapien non quam ornare hendrerit quis vel odio. Cras varius lacus tristique, tristique lacus id, dapibus erat. Aliquam sed vulputate nunc, nec fermentum turpis. Donec rhoncus vulputate eros id ornare. Donec venenatis ipsum quam, sed bibendum tellus vulputate sed. Donec vestibulum diam nibh, vitae dapibus massa vehicula in. Aliquam imperdiet viverra enim, in eleifend dui efficitur ac. Suspendisse varius orci eu sollicitudin dignissim. In sed eleifend nulla, at venenatis erat. Phasellus faucibus, nisi ut sodales dignissim, libero velit imperdiet nisl, aliquam consectetur sem massa vitae turpis.</div>
+			</div>
+			<div class="post">
+					<div class="postTop"><b>Name</b> <span>@username</span><img src="icons/visable-black.png" class="notInline postVis" /></div><br>
+				<div class="postContent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vel dapibus felis. Maecenas faucibus, nunc vitae vehicula imperdiet, odio nibh cursus velit, nec dignissim ex nulla ut ligula. Sed pharetra vitae dui id feugiat. Curabitur nec lobortis magna, sed maximus leo. Nunc risus massa, egestas quis nibh et, ullamcorper dictum dolor. Fusce sit amet tellus eu lectus finibus sodales. Aliquam a sapien non quam ornare hendrerit quis vel odio. Cras varius lacus tristique, tristique lacus id, dapibus erat. Aliquam sed vulputate nunc, nec fermentum turpis. Donec rhoncus vulputate eros id ornare. Donec venenatis ipsum quam, sed bibendum tellus vulputate sed. Donec vestibulum diam nibh, vitae dapibus massa vehicula in. Aliquam imperdiet viverra enim, in eleifend dui efficitur ac. Suspendisse varius orci eu sollicitudin dignissim. In sed eleifend nulla, at venenatis erat. Phasellus faucibus, nisi ut sodales dignissim, libero velit imperdiet nisl, aliquam consectetur sem massa vitae turpis.</div>
+			</div>
+		</div>
     </body>
 </html>
