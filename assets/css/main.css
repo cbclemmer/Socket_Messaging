@@ -5,9 +5,10 @@
 /* Notification area */
 #not {
     width: 100%;
-    position: absolute;
+    position: fixed;
     Font-family: Roboto;
     font-size: 20pt;
+    z-index: 100;
 }
 #Err {
 	display: none;

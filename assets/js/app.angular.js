@@ -10,16 +10,53 @@
         rs.auth = false;
         this.hi = "hello";
     }]);
+    app.controller("postController", ['$scope', '$rootScope', 'socket', function(s, rs, socket){
+        //send request to talk
+        rs.convs = [];
+        this.request = function(username){
+            username = username.split(",");
+            socket.emit("request", {un: username, cookie: getCookie("auth")});
+        }
+        this.validate = function(id, conv){
+            socket.emit("validate", {id: id, conv: conv, cookie: getCookie("auth")});
+        }
+        socket.on("request", function(data){
+            if(data.err) return showErr(data.err);
+            rs.convs.push(data.conv);
+        });
+        socket.on("convs", function(data){
+            for(var i=0;i<data.length;i++){
+                if(data[i].users.length > 2) {
+                    data[i].multi = true;
+                }else{
+                    if(data[i].users[0].username==rs.user.username){
+                        data[i].other = 1;
+                    }else{
+                        data[i].other = 0;
+                    }
+                }
+                if(data[i].validated.length>1&&!data[i].multi) {
+                    data[i].valid = true;
+                }else{
+                    if(data[i].validated[0].username==rs.user.username){
+                        data[i].canValidate = true;
+                    }
+                }
+                rs.convs.push(data[i]);
+            }
+        });
+    }]);
     app.controller("loginController", ['$http', '$scope', '$rootScope', 'socket', function(h, s, rs, socket){
         rs.signUp = false;
         this.temp = {};
         
         //page load auth
         var auth = getCookie("auth");
-        if(auth!=""){
+        //make sure this doesn't get called twice
+        if(auth!=""&&!rs.once){
             socket.emit('auth', auth);
         }
-        
+        rs.once = true;
         this.login = function(email, pass){
             socket.emit("login", {
                email: email,
@@ -27,15 +64,17 @@
             });
             s.log.temp = {};
         };
-        this.signUp = function(user, email, pass, cpass){
+        this.signUp = function(user, name, email, pass, cpass){
             console.log("signing up");
             if(pass == cpass){
                 socket.emit("signUp", {
+                    name: name,
                     username: user,
                     email: email,
                     name: name,
                     password: pass
                 });
+                s.log.temp = {};
             }else{
                 showErr("Passwords do not match")
             }
@@ -54,18 +93,15 @@
             }
         })
         socket.on("signUp", function(data){
-            console.log(data);
             if(data.err) return showErr(data.err);
             showInfo(data.status);
         });
         socket.on('login', function(data) {
-            console.log(data);
             if(data.err) return showErr(data.err);
             showInfo("Logged in");
             rs.user = data.status;
             rs.auth = true;
             document.cookie = "auth="+data.cookie;
-            console.log(s);
         });
         socket.on("logout", function(data){
             if(data.err) return showErr(data.err);

@@ -3,6 +3,7 @@
     Module is accessed in app.js by using login.foo()
 */
 var db = require("../mongo.js");
+
 module.exports = {
     signUp: function(data, cb){
         if(!data.username||!data.email||!data.password||!data.name||!data){
@@ -10,7 +11,7 @@ module.exports = {
         }
         var User = db.db.collection('user');
         //determine if their is already that username or email in the database
-        User.find({$or: [{email: data.email}, {username: data.username}]}, {username: true, email: true}, function(err, user){
+        User.findOne({$or: [{email: data.email}, {username: data.username}]}, {username: true, email: true}, function(err, user){
             if(err)  throw err;
             if(!user){
                 User.insert(data, function(err, user){
@@ -29,14 +30,19 @@ module.exports = {
         if(!data.email||!data.pass||!data) return cb({err: "Incomplete data"});
         var User = db.db.collection('user');
         var Session = db.db.collection('session');
-        User.findOne({email: data.email, password: data.pass}, {email: true, name: true, username: true}, function(err, user){
+        var Conv = db.db.collection("conversation");
+        User.find({email: data.email, password: data.pass}, {email: true, name: true, username: true}).toArray(function(err, user){
             if(err) throw err;
             if(!user) return cb({err: "Email or password did not match"});
-            Session.remove({_id: user._id}, function(err, sess){
+            user = user[0];
+            Session.remove({user: user._id}, function(err, sess){
                var cookie = user._id+require("randomstring").generate();
-                Session.insert({user: user._id, cookie: cookie}, function(err, ses){
+                Session.insert({user: user._id, cookie: cookie, username: user.username, name: user.name, created: (new Date())}, function(err, ses){
                     if(err) throw err;
-                    return cb({status: user, cookie: cookie});
+                    Conv.find({users: {$in: [sess.user]}}).toArray(function(err, convs){
+                        if(err) throw err;
+                        return cb({status: user, cookie: cookie, conv: convs});
+                    });
                 }); 
             });
         });
@@ -50,13 +56,16 @@ module.exports = {
                 return cb({err: "Not logged in"});
         });
     },auth: function(data, cb){
-        console.log("Authenticating");
+        var Conv = db.db.collection("conversation");
         db.db.collection('session').findOne({cookie: data}, function(err, ses){
             if(err) throw err;
             if(ses){
                 db.db.collection('user').findOne({_id: ses.user}, {username: true, name: true, email: true}, function(err, user){
                     if(err) throw err;
-                    return cb({status: true, user: user});
+                    Conv.find({users: {$elemMatch: {username: ses.username}}}).toArray(function(err, convs){
+                        if(err) throw err;
+                        return cb({status: true, user: user, conv: convs});
+                    });
                 });
             }else{
                 return cb({status: false});
