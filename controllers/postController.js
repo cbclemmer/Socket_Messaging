@@ -9,8 +9,10 @@ var db = require("../mongo.js");
         names: array
         the validated array stores the ids of the users that have accepted the invatation to talk
         validated: array
-        the rejected array stores the ids of the users that rejected the invatation to talk
+        the rejected array stores the ids of the users that rejected the invatation to talk, if all but one user rejects the conversation, it is deleted
         rejected: array
+        the deleted array store the users that deleted validated conversation
+        deleted: array
     }
     
 */
@@ -37,7 +39,7 @@ module.exports = {
                                 if(err) throw err;
                                 if(!conv){
                                     var verified = {
-                                        id: sess.user,
+                                        _id: sess.user,
                                         username: sess.username,
                                         name: sess.name
                                     };

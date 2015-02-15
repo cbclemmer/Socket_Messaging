@@ -294,7 +294,6 @@ input[type="text"]:focus {
 	margin-left: auto;
 	margin-right: auto;
 	background-color: white;
-	padding: 20px;
 	box-shadow: 3px 3px 3px grey;
 	z-index: 1;
 }
@@ -311,6 +310,27 @@ input[type="text"]:focus {
 .postContent {
 	font-family: Crimson;
 	font-size: 20px;
+}
+.post-options {
+	padding: 10px;
+	border-bottom: 1px solid rgba(0,0,0,.12);
+}
+.post-header {
+	padding: 20px;
+	font-size: 20pt;
+	cursor: pointer;
+}
+.post-body {
+	padding: 20px;
+	font-family: Crimson;
+	overflow-y: scroll;
+}
+.posts input {
+	color: black;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	width: 95%;
+	padding-left: 5%;
 }
 /*
 	Article specific

@@ -7,7 +7,7 @@ jQuery.fn.rotate = function(degrees) {
 };
 
 window.onscroll=function(){
-    if(window.pageYOffset>0){
+    /*if(window.pageYOffset>0){
     	$(".top").css({paddingTop: "20px", position: "fixed", top: "0px", fontSize: "20pt", height: "60px"});
     	$(".topRight").css({marginTop: "-10px"});
     	$("#searchResults").css({top: "80px"});
@@ -20,7 +20,7 @@ window.onscroll=function(){
     	$("#searchResults").css({top: "175px"});
     	$("#aboutDiv").css({top: "175px"});
     	$("#newPost").css({top: "175px"});
-    }
+    }*/
 }
 $(document).ready(function(){
 	var i = screen.height;

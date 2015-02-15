@@ -1,6 +1,7 @@
 var db = require("./mongo.js");
 var login = require("./controllers/loginController.js");
 var post = require("./controllers/postController.js");
+var message = require("./controllers/messageController.js");
 
 var express = require("express"),
     app = express(),
@@ -95,7 +96,6 @@ io.on('connection', function(socket){
         post.reject(data, function(data){
             if(!data.err){
                 for(var i=0;i<data.users.length;i++){
-                    console.log(data.users[i]._id);
                     io.to("user"+data.users[i]._id).emit("reject", data);
                 }
             }else{
@@ -107,6 +107,27 @@ io.on('connection', function(socket){
     socket.on("delet", function(data){
         post.delet(data, function(data){
             socket.emit("delet", data);
+        });
+    });
+    //begin messages sockets
+    socket.on("getMessages", function(data){
+        var rooms = socket.rooms;
+        for(var i=0;i<rooms.length;i++){
+                if(rooms[i].search("conv")!=-1){
+                    socket.leave(rooms[i]);
+                }
+        }
+        message.getMessages(data, function(data){
+            console.log("getMessages");
+            socket.emit("getMessages", data.messages);
+        });
+    });
+    socket.on("newMess", function(data){
+        console.log(data);
+        message.newMess(data, function(data){
+            console.log("newMess");
+            if(data.err) return socket.emit("newMess", data);
+            io.to("conv"+data[0].conv).emit("newMess", data[0]);
         });
     });
     socket.on("disconnect", function(data){

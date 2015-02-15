@@ -16,6 +16,9 @@
         <script type="text/javascript" src="/js/material.js"></script>
         <script type="text/javascript" src="/js/app.sockets.js"></script>
         <script type="text/javascript" src="/js/app.jquery.js"></script>
+        <script type="text/javascript" src="/js/app.loginController.js"></script>
+        <script type="text/javascript" src="/js/app.postController.js"></script>
+        <script type="text/javascript" src="/js/app.messageController.js"></script>
         <script type="text/javascript" src="/js/app.angular.js"></script>
         <div id="not">
             <div id="Err">This is an Err preview</div>
@@ -118,25 +121,31 @@
 				<a class="login-link" href="#">Lost your password?</a><br>
 			</div>
 		</div>
-		<div class="posts" ng-show="page == ('home')">
-			<div class="post">
-				Conversations
-			</div> 
-			<div class="post" ng-repeat="conv in convs"> 
-				<div ng-hide="conv.multi" class="one2one" ng-controller="postController as post">
-					<div>
+		<div class="posts" ng-show="page == 'home'" style="margin-bottom: 100px">
+			<div class="post" ng-repeat="conv in convs" ng-controller = "messageController as mess">
+				<div style="cursor: pointer" class="post-options" ng-controller="postController as post">
+						<span ng-hide="conv.valid" style="color: red">Pending&emsp;</span>
+						<span ng-show="conv.canValidate" ng-click="post.validate(rs.user._id, conv._id)">Validate&emsp;</span>
+						<span ng-show="conv.canValidate" ng-click="post.reject(rs.user._id, conv._id)")>Reject&emsp;</span>
+						<span ng-show="conv.valid" ng-click="post.delet(user._id, conv._id)" style="cursor: pointer">Delete&emsp;</span>
+				</div>
+				<div ng-hide="conv.multi" class="one2one">
+					<div class="post-header" ng-click="mess.getMessages(conv._id)">
 						{{conv.users[conv.other].name}} @{{conv.users[conv.other].username}}
 					</div>
-					<span ng-hide="conv.valid" style="color: red">Pending</span>
-					<div ng-show="conv.canValidate" style="cursor: pointer">
-						<span ng-click="post.validate(rs.user._id, conv._id)">Validate</span>&emsp;
-						<span ng-click="post.reject(rs.user._id, conv._id)")>Reject</span>
-					</div> 
-					<div ng-show="conv.valid" ng-click="post.delet(user._id, conv._id)" style="cursor: pointer">Delete</div>
 				</div>
-				<div ng-repeat="us in conv.users" ng-show="conv.multi">
+				<div ng-repeat="us in conv.users" ng-show="conv.multi" ng-click="mess.getMessages(conv._id)">
 				{{us.name}} @{{us.username}}
-			</div><br>
+				</div><br>
+				<div class="post-body" ng-controller="messageController as mess" ng-show="currentConv == conv._id">
+					<div ng-repeat="message in messages track by $index">
+						<b>@{{message.username}}:</b> <br>
+						<div class="post-content">{{message.content}}</div>
+					</div>
+				</div>
+				<form ng-submit="mess.newMess(mess.temp, conv._id)" ng-show="currentConv == conv._id">
+						<input type="text" placeholder="message" ng-model="mess.temp"/>
+				</form>
 			</div>
 		</div>
     </body>
