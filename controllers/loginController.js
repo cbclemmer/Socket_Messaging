@@ -31,20 +31,25 @@ module.exports = {
         var User = db.db.collection('user');
         var Session = db.db.collection('session');
         var Conv = db.db.collection("conversation");
-        User.find({email: data.email, password: data.pass}, {email: true, name: true, username: true}).toArray(function(err, user){
+        User.findOne({email: data.email, password: data.pass}, {email: true, name: true, username: true}, function(err, user){
             if(err) throw err;
-            if(!user) return cb({err: "Email or password did not match"});
-            user = user[0];
-            Session.remove({user: user._id}, function(err, sess){
-               var cookie = user._id+require("randomstring").generate();
-                Session.insert({user: user._id, cookie: cookie, username: user.username, name: user.name, created: (new Date())}, function(err, ses){
-                    if(err) throw err;
-                    Conv.find({users: {$in: [sess.user]}}).toArray(function(err, convs){
+            console.log(user);
+            if(!user){
+                console.log("yes");
+                return cb({err: "Email or password did not match"});
+            }
+            else{
+                Session.remove({user: user._id}, function(err, sess){
+                   var cookie = user._id+require("randomstring").generate();
+                    Session.insert({user: user._id, socket: data.socket, cookie: cookie, username: user.username, name: user.name, created: (new Date())}, function(err, ses){
                         if(err) throw err;
-                        return cb({status: user, cookie: cookie, conv: convs});
-                    });
-                }); 
-            });
+                        Conv.find({users: {$in: [sess.user]}}).toArray(function(err, convs){
+                            if(err) throw err;
+                            return cb({status: user, cookie: cookie, conv: convs});
+                        });
+                    }); 
+                });
+            }
         });
     },logout: function(data, cb){
         var Session = db.db.collection('session');

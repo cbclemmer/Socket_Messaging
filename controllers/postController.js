@@ -70,11 +70,25 @@ module.exports = {
     },
     validate: function(data, cb){
         var sess = db.db.collection("session");
-        var Conv = db.db.collection("");
+        var Conv = db.db.collection("conversation");
         sess.findOne({cookie: data.cookie}, function(err, sess){
             if(err) throw err;
             if(sess){
-                
+                Conv.update({_id: new db.objectID(data.conv), "validated.id": {$ne: (new db.objectID(sess.id))}}, {$push: {validated: {
+                    id: sess._id,
+                    username: sess.username,
+                    name: sess.name
+                }}}, function(err, conv){
+                    if(err) throw err;
+                    if(conv){
+                        Conv.findOne({_id: new db.objectID(data.conv)}, function(err, conv) {
+                            if(err) throw err;
+                            cb(conv);
+                        });
+                    }else{
+                        return cb({err: "Internal error, could not find conversation or is already vlaidated"});
+                    }
+                });
             }else{
                 return cb({err: "Not logged in"});
             }

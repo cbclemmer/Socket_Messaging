@@ -8,13 +8,20 @@
 
     app.controller("userController", ['$scope', '$rootScope', 'socket', function(s, rs, socket){
         rs.auth = false;
+        rs.page = "login";
+        window.location.hash = rs.page;
         this.hi = "hello";
     }]);
     app.controller("postController", ['$scope', '$rootScope', 'socket', function(s, rs, socket){
         //send request to talk
-        rs.convs = [];
+        if(!rs.convs){
+            rs.convs = [];
+        }
         this.request = function(username){
             username = username.split(",");
+            $("#newPost input").val("");
+            $("#newPostButton").rotate(0);
+			$("#newPost").slideUp();
             socket.emit("request", {un: username, cookie: getCookie("auth")});
         }
         this.validate = function(id, conv){
@@ -22,7 +29,16 @@
         }
         socket.on("request", function(data){
             if(data.err) return showErr(data.err);
-            rs.convs.push(data.conv);
+            if(data.conv[0].users.length > 2) {
+                data.conv[0].multi = true;
+            }else{
+                if(data.conv[0].users[0].username==rs.user.username){
+                    data.conv[0].other = 1;
+                }else{
+                    data.conv[0].other = 0;
+                }
+            }
+            rs.convs.push(data.conv[0]);
         });
         socket.on("convs", function(data){
             for(var i=0;i<data.length;i++){
@@ -38,11 +54,20 @@
                 if(data[i].validated.length>1&&!data[i].multi) {
                     data[i].valid = true;
                 }else{
-                    if(data[i].validated[0].username==rs.user.username){
+                    if(data[i].validated[0].username!=rs.user.username){
                         data[i].canValidate = true;
                     }
                 }
                 rs.convs.push(data[i]);
+            }
+        });
+        socket.on("validate", function(data) {
+            if(data.err) return showErr(data.err);
+            for(var i=0;i<rs.convs.length;i++){
+                if(rs.convs[i].id==data.status){
+                    rs.convs[i].valid = true;
+                    rs.convs[i].canValidate = false;
+                }
             }
         });
     }]);
@@ -88,8 +113,9 @@
         socket.on("auth", function(data) {
             if(data.status){
                 rs.user = data.user;
-                console.log(rs);
-                return rs.auth = true;
+                rs.auth = true;
+                rs.page = "home";
+                window.location.hash = rs.page;
             }
         })
         socket.on("signUp", function(data){
@@ -102,12 +128,16 @@
             rs.user = data.status;
             rs.auth = true;
             document.cookie = "auth="+data.cookie;
+            rs.page = "home";
+            window.location.hash = rs.page;
         });
         socket.on("logout", function(data){
             if(data.err) return showErr(data.err);
             rs.user = {};
             rs.auth = false;
             document.cookie = "auth=";
+            rs.page = "login";
+            window.location.hash = rs.page;
         });
     }]);
 })();

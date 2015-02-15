@@ -69,6 +69,7 @@ $(document).ready(function(){
 		}else{
 			$("#newPostButton").rotate(45);
 			$("#newPost").slideDown();
+			$("#newPost input").focus();
 		}
 	});
 	$("#aboutButton").click(function(){
