@@ -25,6 +25,7 @@ module.exports = {
         Sess.findOne({cookie: data.cookie}, function(err, sess){
             if(err) throw err;
             if(sess){
+                    if(data.un[0]==sess.username) return cb({err: "You are making conversation with yourself?"})
                     var arr = [{username: sess.username}];
                     for(var i=0;i<data.un.length;i++){
                         arr.push({username: data.un[i]});
@@ -42,7 +43,7 @@ module.exports = {
                                     };
                                     Conv.insert({users: users, validated: [verified], rejected: [], created: (new Date())}, function(err, conv){
                                         if(err) throw err;
-                                        cb({conv: conv});
+                                        cb(conv);
                                     })
                                 }else{
                                     cb({err: "Conversation already started"});
@@ -74,8 +75,9 @@ module.exports = {
         sess.findOne({cookie: data.cookie}, function(err, sess){
             if(err) throw err;
             if(sess){
-                Conv.update({_id: new db.objectID(data.conv), "validated.id": {$ne: (new db.objectID(sess.id))}}, {$push: {validated: {
-                    id: sess._id,
+                // Make sure it is that conversation, and it has not already been validated
+                Conv.update({_id: new db.objectID(data.conv), "validated.id": {$ne: (new db.objectID(sess._id))}}, {$push: {validated: {
+                    _id: sess._id,
                     username: sess.username,
                     name: sess.name
                 }}}, function(err, conv){
@@ -86,7 +88,37 @@ module.exports = {
                             cb(conv);
                         });
                     }else{
-                        return cb({err: "Internal error, could not find conversation or is already vlaidated"});
+                        return cb({err: "Internal error, could not find conversation or is already validated"});
+                    }
+                });
+            }else{
+                return cb({err: "Not logged in"});
+            }
+        });
+    },
+    reject: function(data, cb){
+        var sess = db.db.collection("session");
+        var Conv = db.db.collection("conversation");
+        sess.findOne({cookie: data.cookie}, function(err, sess){
+            if(err) throw err;
+            if(sess){
+                Conv.update({_id: new db.objectID(data.conv), "rejected.id": {$ne: (new db.objectID(sess._id))}}, {$push: {rejected: {
+                    _id: sess._id,
+                    username: sess.username,
+                    name: sess.name
+                }}}, function(err, conv){
+                    if(err) throw err;
+                    if(conv){
+                        Conv.findOne({_id: new db.objectID(data.conv)}, function(err, conv) {
+                            if(err) throw err;
+                            conv.reject = sess._id;
+                            Conv.remove({rejected: {$size: (conv.users.length-1)}}, function(err, conv2){
+                                if(err) throw err;
+                                cb(conv);
+                            });
+                        });
+                    }else{
+                        return cb({err: "Internal error, could not find conversation or is already rejected"});
                     }
                 });
             }else{

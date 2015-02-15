@@ -75,8 +75,12 @@ io.on('connection', function(socket){
     socket.on("request", function(data){
         console.log("request");
         post.request(data, function(data){
-            for(var i=0;i<data.conv[0].users.length;i++){
-                io.to("user"+data.conv[0].users[i]._id).emit("convs", data.conv);
+            if(data.err){
+                return socket.emit("request", data);
+            }else{
+                for(var i=0;i<data[0].users.length;i++){
+                    io.to("user"+data[0].users[i]._id).emit("convs", data);
+                }
             }
         });
     });
@@ -85,6 +89,19 @@ io.on('connection', function(socket){
             for(var i=0;i<data.users.length;i++){
                 io.to("user"+data.users[i]._id).emit("validate", data._id);
             }
+        });
+    });
+    socket.on("reject", function(data){
+        post.reject(data, function(data){
+            if(!data.err){
+                for(var i=0;i<data.users.length;i++){
+                    console.log(data.users[i]._id);
+                    io.to("user"+data.users[i]._id).emit("reject", data);
+                }
+            }else{
+                socket.emit("reject", data);
+            }
+            
         });
     });
     socket.on("disconnect", function(data){
