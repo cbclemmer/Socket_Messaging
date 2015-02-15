@@ -132,6 +132,7 @@
 						<span ng-click="post.validate(rs.user._id, conv._id)">Validate</span>&emsp;
 						<span ng-click="post.reject(rs.user._id, conv._id)")>Reject</span>
 					</div> 
+					<div ng-show="conv.valid" ng-click="post.delet(user._id, conv._id)" style="cursor: pointer">Delete</div>
 				</div>
 				<div ng-repeat="us in conv.users" ng-show="conv.multi">
 				{{us.name}} @{{us.username}}

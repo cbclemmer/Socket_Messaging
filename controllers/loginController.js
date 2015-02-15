@@ -65,7 +65,7 @@ module.exports = {
             if(ses){
                 db.db.collection('user').findOne({_id: ses.user}, {username: true, name: true, email: true}, function(err, user){
                     if(err) throw err;
-                    Conv.find({users: {$elemMatch: {username: ses.username}}, "rejected._id":{$ne: ses._id}}).toArray(function(err, convs){
+                    Conv.find({users: {$elemMatch: {username: ses.username}}, 'rejected.username': {$ne: ses.username}, 'deleted.username': {$ne: ses.username}}).toArray(function(err, convs){
                         if(err) throw err;
                         return cb({status: true, user: user, conv: convs});
                     });

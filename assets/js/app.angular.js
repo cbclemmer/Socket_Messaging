@@ -28,8 +28,10 @@
             socket.emit("validate", {id: id, conv: conv, cookie: getCookie("auth")});
         }
         this.reject = function(id, conv){
-            console.log(conv);
             socket.emit("reject", {id: id, conv: conv, cookie: getCookie("auth")});
+        }
+        this.delet = function(id, conv){
+            socket.emit("delet", {id: id, conv: conv, cookie: getCookie("auth")});
         }
         socket.on("request", function(data){
             if(data.err) return showErr(data.err);
@@ -76,8 +78,17 @@
         });
         socket.on("reject", function(data){
             if(data.err) return showErr(data.err);
-            console.log(data);
             if(data.reject == rs.user._id || data.users.length < 3){
+                for(var i=0;i<rs.convs.length;i++){
+                    if(rs.convs[i]._id == data._id){
+                        rs.convs.splice(i, 1);
+                    }
+                }
+            }
+        });
+        socket.on("delet", function(data){
+            if(data.err) return showErr(data.err);
+            if(data.delet == rs.user._id || data.users.length < 3){
                 for(var i=0;i<rs.convs.length;i++){
                     if(rs.convs[i]._id == data._id){
                         rs.convs.splice(i, 1);

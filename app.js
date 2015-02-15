@@ -104,6 +104,11 @@ io.on('connection', function(socket){
             
         });
     });
+    socket.on("delet", function(data){
+        post.delet(data, function(data){
+            socket.emit("delet", data);
+        });
+    });
     socket.on("disconnect", function(data){
         /*db.db.collection('session').remove({socket: socket.id}, function(err, sess){
             if(err) throw err;

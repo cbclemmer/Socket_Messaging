@@ -41,7 +41,7 @@ module.exports = {
                                         username: sess.username,
                                         name: sess.name
                                     };
-                                    Conv.insert({users: users, validated: [verified], rejected: [], created: (new Date())}, function(err, conv){
+                                    Conv.insert({users: users, validated: [verified], rejected: [], deleted: [], created: (new Date())}, function(err, conv){
                                         if(err) throw err;
                                         cb(conv);
                                     })
@@ -76,7 +76,7 @@ module.exports = {
             if(err) throw err;
             if(sess){
                 // Make sure it is that conversation, and it has not already been validated
-                Conv.update({_id: new db.objectID(data.conv), "validated.id": {$ne: (new db.objectID(sess._id))}}, {$push: {validated: {
+                Conv.update({_id: new db.objectID(data.conv), 'validated.username': {$ne: sess.username}}, {$push: {validated: {
                     _id: sess._id,
                     username: sess.username,
                     name: sess.name
@@ -102,7 +102,7 @@ module.exports = {
         sess.findOne({cookie: data.cookie}, function(err, sess){
             if(err) throw err;
             if(sess){
-                Conv.update({_id: new db.objectID(data.conv), "rejected.id": {$ne: (new db.objectID(sess._id))}}, {$push: {rejected: {
+                Conv.update({_id: new db.objectID(data.conv), 'rejected.username': {$ne: sess.username}}, {$push: {rejected: {
                     _id: sess._id,
                     username: sess.username,
                     name: sess.name
@@ -119,6 +119,36 @@ module.exports = {
                         });
                     }else{
                         return cb({err: "Internal error, could not find conversation or is already rejected"});
+                    }
+                });
+            }else{
+                return cb({err: "Not logged in"});
+            }
+        });
+    },
+    delet: function(data, cb){
+        var sess = db.db.collection("session");
+        var Conv = db.db.collection("conversation");
+        sess.findOne({cookie: data.cookie}, function(err, sess){
+            if(err) throw err;
+            if(sess){
+                Conv.update({_id: new db.objectID(data.conv), 'deleted.username': {$ne: sess.username}}, {$push: {deleted: {
+                    _id: sess.user,
+                    name: sess.name,
+                    username: sess.username
+                }}}, function(err, conv){
+                    if(err) throw err;
+                    if(conv){
+                        Conv.findOne({_id: new db.objectID(data.conv)}, function(err, conv){
+                            if(err) throw err;
+                            conv.delet = sess._id;
+                            Conv.remove({deleted: {$size: (conv.users.length)}}, function(err, conv2){
+                                if(err) throw err;
+                                cb(conv);
+                            });
+                        });
+                    }else{
+                        return cb({err: "Internal error, could not find conversation or is already deleted"});
                     }
                 });
             }else{
