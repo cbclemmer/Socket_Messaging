@@ -26,6 +26,7 @@
             if(data.err) return showErr(data.err);
             for(var i=0;i<$(".post-body").length;i++){
                 $(".post-body").scrollTop($(document).height()+10000);
+                $(".post-body input").focus();
             }
             rs.messages = data;
         });

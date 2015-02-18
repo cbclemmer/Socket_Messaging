@@ -19,7 +19,6 @@
             s.log.temp = {};
         };
         this.signUp = function(user, name, email, pass, cpass){
-            console.log("signing up");
             if(pass == cpass){
                 socket.emit("signUp", {
                     name: name,
@@ -40,7 +39,7 @@
             rs.signUp = !rs.signUp;
         }
         socket.on("auth", function(data) {
-            if(data.status){
+            if(data.status&&!rs.auth){
                 rs.user = data.user;
                 rs.auth = true;
                 rs.page = "home";
@@ -53,6 +52,7 @@
         });
         socket.on('login', function(data) {
             if(data.err) return showErr(data.err);
+            socket.emit('auth', getCookie("auth"));
             showInfo("Logged in");
             rs.user = data.status;
             rs.auth = true;
@@ -66,6 +66,7 @@
             rs.auth = false;
             rs.messages = [];
             rs.convs = [];
+            rs.once = false;
             document.cookie = "auth=";
             rs.page = "login";
             window.location.hash = rs.page;

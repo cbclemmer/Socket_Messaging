@@ -41,7 +41,7 @@ module.exports = {
                    var cookie = user._id+require("randomstring").generate();
                     Session.insert({user: user._id, socket: data.socket, cookie: cookie, username: user.username, name: user.name, created: (new Date())}, function(err, ses){
                         if(err) throw err;
-                        Conv.find({users: {$in: [sess.user]}}).toArray(function(err, convs){
+                        Conv.find({users: {$elemMatch: {username: ses.username}}, 'rejected.username': {$ne: ses.username}, 'deleted.username': {$ne: ses.username}}).toArray(function(err, convs){
                             if(err) throw err;
                             return cb({status: user, cookie: cookie, conv: convs});
                         });

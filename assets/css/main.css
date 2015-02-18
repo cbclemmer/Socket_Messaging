@@ -34,8 +34,9 @@
 }
 
 .login {
-margin: 20px auto;
-width: 300px;
+  margin: 20px auto;
+  width: 300px;
+  margin-top: 100px;
 }
 .login-screen {
 background-color: #FFF;
@@ -99,4 +100,16 @@ box-shadow: none;
   color: #444;
   display: block;
 	margin-top: 12px;
+}
+@media only screen and (max-device-width: 480px){
+  .login {
+    font-size: 34pt;
+    width: 90%;
+  }
+  .login input {
+    width: 100%;
+  }
+  .top {
+    display: none;
+  }
 }

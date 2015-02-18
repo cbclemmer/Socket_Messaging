@@ -59,7 +59,6 @@ io.on('connection', function(socket){
                 if(!data.err){
                     socket.join("user"+data.status._id);
                     socket.emit('login', {status: data.status, user: data.status, cookie: data.cookie});
-                    socket.emit("convs", data.conv);
                 }else{
                     socket.emit("login", {err: data.err});
                 }
