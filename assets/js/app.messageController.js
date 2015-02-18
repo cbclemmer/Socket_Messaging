@@ -6,7 +6,7 @@
             if(rs.currentConv == conv){
                 rs.currentConv = "";
             }else{
-                $(".post-body").height($(window).height()-550);
+                $(".post-body").height($(window).height()-400);
                 for(var i=0;i<rs.convs.length;i++){
                     if(rs.convs[i]._id==conv){
                         break;
@@ -31,9 +31,11 @@
         });
         socket.on("newMess", function(data){
             if(data.err) return showErr(data.err);
-            $(".post-body").scrollTop($(document).height()+10000);
-            if(data != rs.messages[rs.messages.length-1]){
-                rs.messages.push(data);
+            if(data.conv == rs.currentConv){
+                $(".post-body").scrollTop($(document).height()+10000);
+                if(data != rs.messages[rs.messages.length-1]){
+                    rs.messages.push(data);
+                }    
             }
         });
     }]);

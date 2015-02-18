@@ -92,7 +92,7 @@ input[type="text"]:focus {
 	background-color: white;
 	z-index: 10;
 	position: fixed;
-	top: 175px;
+	top: 80px;
 	right: 0px;
 	box-shadow: -1px 3px 3px grey;
 	display: none;
@@ -150,6 +150,7 @@ input[type="text"]:focus {
 }
 .topRight {
 	float: right;
+	margin-top: "-10px";
 }
 .iconButton {
 	background: transparent center center no-repeat;
@@ -168,14 +169,16 @@ input[type="text"]:focus {
 	left: 10px;
 }
 .top {
-	height: 75px;
+	height: 60px;
 	background-color: #2196F3;
 	width: 95%;
 	color: white;
-	font-size: 34pt;
+	font-size: 20pt;
 	padding-left: 5%;
-	padding-top: 100px;
+	padding-top: 20px;
 	z-index: 10;
+	position: fixed;
+	top: 0px;
 }
 /*
 	Home specific
@@ -188,6 +191,7 @@ input[type="text"]:focus {
 }
 #newPost {
 	width: 80%;
+	top: 80px;
 	height: 200px;
 	margin-left: 10%;
 	position: fixed;	
@@ -227,6 +231,7 @@ input[type="text"]:focus {
 	position: fixed;
 	background-color: rgba(0,0,0, .12);
 	display: none;
+	top: 80px;
 }
 .aboutDivOption{
 	margin-top: 10px;
@@ -324,6 +329,9 @@ input[type="text"]:focus {
 	padding: 20px;
 	font-family: Crimson;
 	overflow-y: scroll;
+}
+.posts {
+	margin-top: 100px;
 }
 .posts input {
 	color: black;

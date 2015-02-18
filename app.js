@@ -105,6 +105,7 @@ io.on('connection', function(socket){
         });
     });
     socket.on("delet", function(data){
+        socket.leave("conv"+data.conv);
         post.delet(data, function(data){
             socket.emit("delet", data);
         });
@@ -112,18 +113,13 @@ io.on('connection', function(socket){
     //begin messages sockets
     socket.on("getMessages", function(data){
         var rooms = socket.rooms;
-        for(var i=0;i<rooms.length;i++){
-                if(rooms[i].search("conv")!=-1){
-                    socket.leave(rooms[i]);
-                }
-        }
         message.getMessages(data, function(data){
             console.log("getMessages");
+            socket.join("conv"+data.conv);
             socket.emit("getMessages", data.messages);
         });
     });
     socket.on("newMess", function(data){
-        console.log(data);
         message.newMess(data, function(data){
             console.log("newMess");
             if(data.err) return socket.emit("newMess", data);
