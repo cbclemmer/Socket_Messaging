@@ -32,7 +32,24 @@
     text-align: center;
     height: 50px;
 }
-
+#sure {
+  margin-left: 35%;
+  margin-right: 35%;
+  width: 30%;
+  background-color: white;
+  text-align: center;
+  position: fixed;
+  box-shadow: 1px 1px 1px grey;
+  padding: 20px;
+  font-size: 16pt;
+  line-height: 2;
+  display: none;
+  z-index: 100;
+}
+#sure span {
+  color: #2196F3;
+  cursor: pointer;
+}
 .login {
   margin: 20px auto;
   width: 300px;

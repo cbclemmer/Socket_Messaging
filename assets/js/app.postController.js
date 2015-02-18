@@ -19,7 +19,18 @@
             socket.emit("reject", {id: id, conv: conv, cookie: getCookie("auth")});
         }
         this.delet = function(id, conv){
-            socket.emit("delet", {id: id, conv: conv, cookie: getCookie("auth")});
+            $("#sure").fadeOut('fast', function(){
+			    $("#shadow").fadeOut('fast');
+		    });
+            socket.emit("delet", {conv: rs.sure.conv, cookie: getCookie("auth")});
+        }
+        this.sure = function(type, conv) {
+            $("#shadow").fadeIn('fast', function(){
+                $("#sure").fadeIn('fast');
+            });
+            rs.sure = {
+                conv: conv
+            };
         }
         socket.on("request", function(data){
             if(data.err) return showErr(data.err);

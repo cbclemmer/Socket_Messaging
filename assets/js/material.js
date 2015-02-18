@@ -5,23 +5,6 @@ jQuery.fn.rotate = function(degrees) {
                  'transform' : 'rotate('+ degrees +'deg)'});
     return $(this);
 };
-
-window.onscroll=function(){
-    /*if(window.pageYOffset>0){
-    	$(".top").css({paddingTop: "20px", position: "fixed", top: "0px", fontSize: "20pt", height: "60px"});
-    	$(".topRight").css({marginTop: "-10px"});
-    	$("#searchResults").css({top: "80px"});
-    	$("#aboutDiv").css({top: "80px"});
-    	$("#newPost").css({top: "80px"});
-    }
-    if(window.pageYOffset==0){
-    	$(".top").css({paddingTop: "100px", position: "relative", fontSize: "34pt", height: "75px"});
-    	$(".topRight").css({marginTop: "0px"});
-    	$("#searchResults").css({top: "175px"});
-    	$("#aboutDiv").css({top: "175px"});
-    	$("#newPost").css({top: "175px"});
-    }*/
-}
 $(document).ready(function(){
 	var i = screen.height;
 	$("#sideNav").css({height: (i+"px")});
@@ -92,6 +75,11 @@ $(document).ready(function(){
 	$("#friendsExit").click(function(){
 		$("#friendsDiv").animate({right: "-70%"}, 500, function(){
 			$("#friendsDiv").hide();
+		});
+	});
+	$(".no").click(function(){
+		$("#sure").fadeOut('fast', function(){
+			$("#shadow").fadeOut('fast');
 		});
 	});
 });

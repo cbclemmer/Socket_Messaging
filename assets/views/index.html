@@ -37,16 +37,16 @@
 		</div>
 		<form id="newPost" ng-controller="postController as post" ng-submit="post.request(post.username)">
 			<br><div style="margin-left: auto;margin-right:auto;width:30%;"><input type="text" style="color:black;text-align:center"placeholder="Username" ng-model="post.username"></div><br>
-			<!--<div ng-click="">Create conversation</div> -->
 		</form>
-		<div id="aboutDiv">
-			<div class="aboutDivOption" id="aboutFriends">Friends</div>
-		</div>
 		<div id="shadow"></div>
 		<div id="sideNav" ng-controller="loginController as log">
 			<ul>
 				<li ng-click="log.logout()"><img src="icons/logout.png" class="notInline">&emsp;Logout</li>
 			</ul>
+		</div>
+		<div id="sure" ng-controller="postController as post">
+			<p>Are You sure?</p>
+			<span ng-click="post.delet()">Yes</span>&emsp;<span class="no">No</span>
 		</div>
 		<div class="login" ng-hide="auth" ng-controller="loginController as log">
 			<div class="login-screen">
@@ -105,7 +105,7 @@
 						<span ng-hide="conv.valid" style="color: red">Pending&emsp;</span>
 						<span ng-show="conv.canValidate" ng-click="post.validate(rs.user._id, conv._id)">Validate&emsp;</span>
 						<span ng-show="conv.canValidate" ng-click="post.reject(rs.user._id, conv._id)")>Reject&emsp;</span>
-						<span ng-show="conv.valid" ng-click="post.delet(user._id, conv._id)" style="cursor: pointer">Delete&emsp;</span>
+						<span ng-show="conv.valid" ng-click="post.sure('conv', conv._id)" style="cursor: pointer">Delete&emsp;</span>
 				</div>
 				<div ng-hide="conv.multi" class="one2one">
 					<div class="post-header" ng-click="mess.getMessages(conv._id)">
