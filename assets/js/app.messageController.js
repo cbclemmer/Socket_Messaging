@@ -28,6 +28,12 @@
                 $(".post-body").scrollTop($(document).height()+10000);
                 $(".post-body input").focus();
             }
+            for(var i=0;i<data.length;i++){
+                if(data[i].username == rs.user.username)
+                    data[i].style = {'text-align': 'right'}
+                else 
+                    data[i].style = {};
+            }
             rs.messages = data;
         });
         socket.on("newMess", function(data){

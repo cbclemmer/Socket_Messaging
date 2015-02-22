@@ -29,6 +29,7 @@ module.exports = {
         var sess = db.db.collection("session");
         var Mess = db.db.collection('message');
         var Conv = db.db.collection("conversation");
+        if(data.username.search("<")==-1) cb({err: "Message cannot have a '<' in it"});
         sess.findOne({cookie: data.cookie}, function(err, sess){
             if(err) throw err;
             if(sess){

@@ -118,6 +118,18 @@ box-shadow: none;
   display: block;
 	margin-top: 12px;
 }
+.message {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(0,0,0,.12);
+  line-height: 2;
+  font-size: 16pt;
+}
+.message i {
+  font-family: roboto;
+  font-size: 12pt;
+}
 @media only screen and (max-device-width: 480px){
   .login {
     font-size: 34pt;

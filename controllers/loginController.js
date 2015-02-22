@@ -12,7 +12,7 @@ module.exports = {
         data.email = data.email.toLowerCase();
         //validate everything was inputted correctly.
         var err = false;
-        err  = (data.username.search(" ")!=-1||data.username.search(",")!=-1) ? "Usernames cannot contain spaces or commas" : false;
+        err  = (data.username.search(" ")!=-1||data.username.search(",")!=-1||data.username.search("<")!=-1) ? "Usernames cannot contain spaces or commas" : false;
         err = (data.password.length<8) ? "Password must be at least eight characters" : false;
         if(err) return cb({err: err});
         var User = db.db.collection('user');

@@ -116,8 +116,8 @@
 				{{us.name}} @{{us.username}}
 				</div><br>
 				<div class="post-body" ng-controller="messageController as mess" ng-show="currentConv == conv._id">
-					<div ng-repeat="message in messages track by $index">
-						<b>@{{message.username}}:</b> <br>
+					<div class="message" ng-repeat="message in messages track by $index" ng-style="message.style">
+						<i>@{{message.username}}:</i> <br>
 						<div class="post-content">{{message.content}}</div>
 					</div>
 				</div>
