@@ -41,7 +41,7 @@ io.on('connection', function(socket){
                if(data.err) return socket.emit('auth', {status: false});
                //each conversation has a channel for talking
                if(data.status){
-                    socket.join("user"+data.user._id)
+                    socket.join("user"+data.user._id);
                     socket.emit('auth', {status: data.status, user: data.user});
                     socket.emit("convs", data.conv);
                }else{

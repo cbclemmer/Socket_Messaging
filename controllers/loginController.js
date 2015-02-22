@@ -32,7 +32,7 @@ module.exports = {
                 }
             }
         });
-    },login: function(data, cb){
+    },login: function(data, cb){ 
         if(!data.email||!data.pass||!data) return cb({err: "Incomplete data"});
         var User = db.db.collection('user');
         var Session = db.db.collection('session');

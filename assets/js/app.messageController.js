@@ -22,32 +22,5 @@
             s.mess.temp = "";
             socket.emit("newMess", {mess: mess, conv: conv, cookie: getCookie("auth")});
         }
-        socket.on("getMessages", function(data){
-            if(data.err) return showErr(data.err);
-            for(var i=0;i<$(".post-body").length;i++){
-                $(".post-body").scrollTop($(document).height()+10000);
-                $(".post-body input").focus();
-            }
-            for(var i=0;i<data.length;i++){
-                if(data[i].username == rs.user.username)
-                    data[i].style = {'text-align': 'right'}
-                else 
-                    data[i].style = {};
-            }
-            rs.messages = data;
-        });
-        socket.on("newMess", function(data){
-            if(data.err) return showErr(data.err);
-            if(data.username == rs.user.username)
-                    data.style = {'text-align': 'right'}
-                else 
-                    data.style = {};
-            if(data.conv == rs.currentConv){
-                $(".post-body").scrollTop($(document).height()+10000);
-                if(data != rs.messages[rs.messages.length-1]){
-                    rs.messages.push(data);
-                }    
-            }
-        });
     }]);
 })();

@@ -1,5 +1,5 @@
 (function(){
-    var app = angular.module("app", ['btford.socket-io', 'post', 'login', 'message']);
+    var app = angular.module("app", ['btford.socket-io', 'post', 'login', 'message', 'socke']);
     app.factory('socket', function (socketFactory) {
         return socketFactory({
             ioSocket: io.connect('http://104.131.176.87:8080/')

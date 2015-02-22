@@ -38,38 +38,5 @@
         this.toggleSign = function(){
             rs.signUp = !rs.signUp;
         }
-        socket.on("auth", function(data) {
-            if(data.status&&!rs.auth){
-                rs.user = data.user;
-                rs.auth = true;
-                rs.page = "home";
-                window.location.hash = rs.page;
-            }
-        })
-        socket.on("signUp", function(data){
-            if(data.err) return showErr(data.err);
-            showInfo(data.status);
-        });
-        socket.on('login', function(data) {
-            if(data.err) return showErr(data.err);
-            socket.emit('auth', getCookie("auth"));
-            showInfo("Logged in");
-            rs.user = data.status;
-            rs.auth = true;
-            document.cookie = "auth="+data.cookie;
-            rs.page = "home";
-            window.location.hash = rs.page;
-        });
-        socket.on("logout", function(data){
-            if(data.err) return showErr(data.err);
-            rs.user = {};
-            rs.auth = false;
-            rs.messages = [];
-            rs.convs = [];
-            rs.once = false;
-            document.cookie = "auth=";
-            rs.page = "login";
-            window.location.hash = rs.page;
-        });
     }]);
 })();
