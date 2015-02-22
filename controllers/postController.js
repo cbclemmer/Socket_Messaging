@@ -87,7 +87,7 @@ module.exports = {
                     if(conv){
                         Conv.findOne({_id: new db.objectID(data.conv)}, function(err, conv) {
                             if(err) throw err;
-                            cb(conv);
+                            cb({conv: conv, user: sess.username});
                         });
                     }else{
                         return cb({err: "Internal error, could not find conversation or is already validated"});
@@ -143,7 +143,7 @@ module.exports = {
                     if(conv){
                         Conv.findOne({_id: new db.objectID(data.conv)}, function(err, conv){
                             if(err) throw err;
-                            conv.delet = sess._id;
+                            conv.delet = sess.user;
                             Conv.remove({deleted: {$size: (conv.users.length)}}, function(err, conv2){
                                 if(err) throw err;
                                 cb(conv);

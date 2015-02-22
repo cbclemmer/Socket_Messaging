@@ -59,8 +59,22 @@
                 if(data[i].validated.length>1&&!data[i].multi) {
                     data[i].valid = true;
                 }else{
-                    if(data[i].validated[0].username!=rs.user.username){
-                        data[i].canValidate = true;
+                    if(data[i].multi){
+                        if(data[i].validated.length == data[i].users.length){
+                            data[i].valid = true;
+                            data.canValidate = false;
+                        }else{
+                            data[i].canValidate = true;
+                            for(var ii=0;ii<data[i].validated.length;ii++){
+                                if(data[i].validated[ii].username == rs.user.username){
+                                    data[i].canValidate = false;
+                                }
+                            }
+                        }
+                    }else{
+                        if(data[i].validated[0].username!=rs.user.username){
+                            data[i].canValidate = true;
+                        }
                     }
                 }
                 rs.convs.push(data[i]);
@@ -69,9 +83,20 @@
         socket.on("validate", function(data) {
             if(data.err) return showErr(data.err);
             for(var i=0;i<rs.convs.length;i++){
-                if(rs.convs[i].id==data.status){
-                    rs.convs[i].valid = true;
-                    rs.convs[i].canValidate = false;
+                if(rs.convs[i]._id==data.conv._id){
+                    if(rs.convs[i].multi){
+                        if(data.conv.validated.length == data.conv.users.length){
+                                rs.convs[i].valid = true;
+                                rs.convs[i].canValidate = false;
+                        }else{
+                            if(data.user == rs.user.username){
+                                rs.convs[i].canValidate = false;
+                            }
+                        }
+                    }else{
+                        rs.convs[i].valid = true;
+                        rs.convs[i].canValidate = false;
+                    }
                 }
             }
         });

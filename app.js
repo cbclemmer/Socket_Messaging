@@ -86,8 +86,12 @@ io.on('connection', function(socket){
     });
     socket.on("validate", function(data) {
         post.validate(data, function(data){
-            for(var i=0;i<data.users.length;i++){
-                io.to("user"+data.users[i]._id).emit("validate", data._id);
+            if(data.err){
+                return socket.emit("request", data);
+            }else{
+                for(var i=0;i<data.conv.users.length;i++){
+                    io.to("user"+data.conv.users[i]._id).emit("validate", data);
+                }
             }
         });
     });

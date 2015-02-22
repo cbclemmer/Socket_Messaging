@@ -38,6 +38,10 @@
         });
         socket.on("newMess", function(data){
             if(data.err) return showErr(data.err);
+            if(data.username == rs.user.username)
+                    data.style = {'text-align': 'right'}
+                else 
+                    data.style = {};
             if(data.conv == rs.currentConv){
                 $(".post-body").scrollTop($(document).height()+10000);
                 if(data != rs.messages[rs.messages.length-1]){
