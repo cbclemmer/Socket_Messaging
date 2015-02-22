@@ -10,6 +10,11 @@ module.exports = {
             return cb({err: "Form incomplete"});
         }
         data.email = data.email.toLowerCase();
+        //validate everything was inputted correctly.
+        var err = false;
+        err  = (data.username.search(" ")!=-1||data.username.search(",")!=-1) ? "Usernames cannot contain spaces or commas" : false;
+        err = (data.password.length<8) ? "Password must be at least eight characters" : false;
+        if(err) return cb({err: err});
         var User = db.db.collection('user');
         //determine if their is already that username or email in the database
         User.findOne({$or: [{email: data.email}, {username: data.username}]}, {username: true, email: true}, function(err, user){
@@ -29,10 +34,10 @@ module.exports = {
         });
     },login: function(data, cb){
         if(!data.email||!data.pass||!data) return cb({err: "Incomplete data"});
-        data.email = data.email.toLowerCase();
         var User = db.db.collection('user');
         var Session = db.db.collection('session');
         var Conv = db.db.collection("conversation");
+        data.email = data.email.toLowerCase();
         User.findOne({email: data.email, password: data.pass}, {email: true, name: true, username: true}, function(err, user){
             if(err) throw err;
             if(!user){
