@@ -9,6 +9,7 @@ module.exports = {
         if(!data.username||!data.email||!data.password||!data.name||!data){
             return cb({err: "Form incomplete"});
         }
+        data.email = data.email.toLowerCase();
         var User = db.db.collection('user');
         //determine if their is already that username or email in the database
         User.findOne({$or: [{email: data.email}, {username: data.username}]}, {username: true, email: true}, function(err, user){
@@ -28,6 +29,7 @@ module.exports = {
         });
     },login: function(data, cb){
         if(!data.email||!data.pass||!data) return cb({err: "Incomplete data"});
+        data.email = data.email.toLowerCase();
         var User = db.db.collection('user');
         var Session = db.db.collection('session');
         var Conv = db.db.collection("conversation");
