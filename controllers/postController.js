@@ -34,7 +34,7 @@ module.exports = {
                     }
                     User.find({$or: arr}, {username: true, name: true}).toArray(function(err, users){
                         if(err) throw err;
-                        if(users){
+                        if(users.length>1){
                             Conv.findOne({users: users}, function(err, conv){
                                 if(err) throw err;
                                 if(!conv){
@@ -52,7 +52,11 @@ module.exports = {
                                 }
                             });
                         }else{
-                            return cb({err: ("Could not find users")});
+                            if(users.length==1){
+                                return cb({err: "User not found"});
+                            }else{
+                                return cb({err: ("Could not find users")});
+                            }
                         }
                     });
             }else{
