@@ -6,6 +6,6 @@ This is a simple message application
 * Everything was built to be housed on one page  
 * Built on Angular.js with jQuery  
 
-###Backend
+###Back End
 * Built using Node.js, Mongodb, express.js, socket.io, and others  
 * Socket.io allows realtime updates to everything on the page
