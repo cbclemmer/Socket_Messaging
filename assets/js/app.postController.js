@@ -6,6 +6,7 @@
             rs.convs = [];
         }
         this.request = function(username){
+            username = username.replace(/ /g, "");
             username = username.split(",");
             $("#newPost input").val("");
             $("#newPostButton").rotate(0);
