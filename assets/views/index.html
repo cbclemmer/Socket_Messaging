@@ -101,6 +101,12 @@
 			</div>
 		</div>
 		<div class="posts" ng-show="page == 'home'" style="margin-bottom: 100px">
+			<div class="post post-header" ng-show="convs.length == 0" style="font-size: 16pt">
+				<h3>Conversations</h3>
+				<p>To make a conversation click on the yellow plus button and type in the username</p><br>
+				<h3>Multi user Conversations</h3>
+				<p>To make a multi user conversation, type in the usernames seperated by a comma</p>
+			</div>
 			<div class="post" ng-repeat="conv in convs" ng-controller = "messageController as mess">
 				<div style="cursor: pointer" class="post-options" ng-controller="postController as post">
 						<span ng-hide="conv.valid" style="color: red">Pending&emsp;</span>

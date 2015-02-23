@@ -130,6 +130,16 @@ box-shadow: none;
   font-family: roboto;
   font-size: 12pt;
 }
+.post.ng-enter, .post.ng-leave {
+  -webkit-transition:0.5s linear all;
+  transition:0.5s linear all;
+}
+.post.ng-enter {
+  opacity: 0;
+}
+.post.ng-enter.ng-enter-active {
+  opacity: 1;
+}
 @media only screen and (max-device-width: 480px){
   .login {
     font-size: 34pt;
