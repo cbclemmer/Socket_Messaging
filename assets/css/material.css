@@ -150,7 +150,10 @@ input[type="text"]:focus {
 }
 .topRight {
 	float: right;
-	margin-top: "-10px";
+	padding-right: 30px;
+	padding-top: 20px;
+	color: #FFEB3B;
+	cursor: pointer;
 }
 .iconButton {
 	background: transparent center center no-repeat;

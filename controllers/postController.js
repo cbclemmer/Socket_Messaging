@@ -22,6 +22,7 @@ module.exports = {
     request: function(data, cb){
         var User = db.db.collection("user");
         var Conv = db.db.collection("conversation");
+        var Action = db.db.collection("action");
         var Sess = db.db.collection("session");
         //basic auth, id of the user is sess.user
         Sess.findOne({cookie: data.cookie}, function(err, sess){
@@ -45,7 +46,17 @@ module.exports = {
                                     };
                                     Conv.insert({users: users, validated: [verified], rejected: [], deleted: [], created: (new Date())}, function(err, conv){
                                         if(err) throw err;
-                                        cb(conv);
+                                        var actionText = sess.name + " wants to start a conversation";
+                                        var actionTo = [];
+                                        for(var i = 0;i < users.length;i++){
+                                            if(users[i]._id != sess.user){
+                                                actionTo.push(users[i]._id);
+                                            }
+                                        }
+                                        Action.insert({type: "request", from: {name: sess.name, username: sess.username}, to: actionTo, text: actionText, created: new Date()}, function(err, action){
+                                            if(err) throw err;
+                                            cb({conv: conv, action: action[0]});
+                                        });
                                     })
                                 }else{
                                     cb({err: "Conversation already started"});

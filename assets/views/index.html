@@ -34,7 +34,13 @@
 			<div id="newPostButton">+</div>
 			&emsp;
 			<div class="topRight">
+				{{actions.length}}!
 			</div>
+		</div>
+		<div id="searchResults">
+				<div ng-repeat="action in actions" class="action">
+					{{action.text}}
+				</div>
 		</div>
 		<form id="newPost" ng-controller="postController as post" ng-submit="post.request(post.username)">
 			<br><div style="margin-left: auto;margin-right:auto;width:30%;"><input type="text" style="color:black;text-align:center"placeholder="Username" ng-model="post.username"></div><br>

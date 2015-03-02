@@ -44,7 +44,7 @@ io.on('connection', function(socket){
                //each conversation has a channel for talking
                if(data.status){
                     socket.join("user"+data.user._id);
-                    socket.emit('auth', {status: data.status, user: data.user});
+                    socket.emit('auth', {status: data.status, user: data.user, actions: data.actions});
                     socket.emit("convs", data.conv);
                }else{
                     socket.emit('auth', {status: data.status});
@@ -80,8 +80,11 @@ io.on('connection', function(socket){
             if(data.err){
                 return socket.emit("request", data);
             }else{
-                for(var i=0;i<data[0].users.length;i++){
-                    io.to("user"+data[0].users[i]._id).emit("convs", data);
+                for(var i=0;i<data.conv[0].users.length;i++){
+                    io.to("user"+data.conv[0].users[i]._id).emit("convs", data.conv);
+                }
+                for(var i=0;i<data.action.to.length;i++){
+                    io.to("user"+data.action.to[i]).emit("action", data.action);
                 }
             }
         });

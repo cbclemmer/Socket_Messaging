@@ -1,3 +1,4 @@
+var p=false;
 jQuery.fn.rotate = function(degrees) {
     $(this).css({'-webkit-transform' : 'rotate('+ degrees +'deg)',
                  '-moz-transform' : 'rotate('+ degrees +'deg)',
@@ -38,12 +39,13 @@ $(document).ready(function(){
 			$("#shadow").fadeOut('fast');
 		});
 	});
-	$("#searchBar").keyup(function(){
-		if($("#searchBar").val()!=""){
-			$("#searchResults").slideDown();
-		}else{
-			$("#searchResults").slideUp();
-		}
+	$(".topRight").click(function(){
+		setTimeout( function(){
+			if(!$("#searchResults").is(":visible")&&!p){
+				$("#searchResults").slideDown('fast');
+				p=true;
+			}
+		}, 200);
 	});
 	$("#newPostButton").click(function(){
 		if($("#newPost").is(":visible")) {
@@ -81,5 +83,11 @@ $(document).ready(function(){
 		$("#sure").fadeOut('fast', function(){
 			$("#shadow").fadeOut('fast');
 		});
+	});
+	$(document).click(function(){
+		if($("#searchResults").is(":visible")&&p){
+			$("#searchResults").slideUp('fast');
+			p=false;
+		}
 	});
 });
