@@ -21,8 +21,10 @@ app.get('/', function(req, res){
 
 db.mongoclient.open(function(err, mongoclient) {
     if(err) throw err;
-    server.listen(8080);
-    console.log("Server started");
+    var port = process.argv[2];
+    if(!port) port = 8080; 
+    server.listen(port);
+    console.log("Server started on port "+port);
 });
 
 io.on('connection', function(socket){
