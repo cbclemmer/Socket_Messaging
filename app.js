@@ -21,7 +21,7 @@ app.get('/', function(req, res){
 
 db.mongoclient.open(function(err, mongoclient) {
     if(err) throw err;
-    server.listen(8080);
+    server.listen(82);
     console.log("Server started");
 });
 

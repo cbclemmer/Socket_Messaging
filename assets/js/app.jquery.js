@@ -29,5 +29,10 @@ function showInfo(s){
 }
 
 $(document).ready(function(){
-    
+    $(document).click(function(e){
+        if($("#Err").is(":visible")||$("#Info").is(":visible")){
+            $("#Err").hide();
+            $("#Info").hide();
+        }
+    });
 });

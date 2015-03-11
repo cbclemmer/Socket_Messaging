@@ -108,7 +108,10 @@
             showInfo(data.status);
         });
         socket.on('login', function(data) {
-            if(data.err) return showErr(data.err);
+            if(data.err){
+                $( "#login-email" ).focus();
+                return showErr(data.err);
+            }
             socket.emit('auth', data.cookie);
             showInfo("Logged in");
             rs.user = data.status;
