@@ -162,9 +162,19 @@
         });
         socket.on("action", function(data){
             if(data.err) return showErr(data.err);
-            console.log(data);
             showInfo(data.text);
-            return rs.actions.push(data);
+            if(data.from.name!=rs.user.name){
+                return rs.actions.push(data);
+            }
+        });
+        /*
+            Socket Controller
+        */
+        socket.on("showNots", function(data){
+           if(data.err) return showErr(data.err);
+           setTimeout(function(){
+               rs.actions = [];
+           }, 5000);
         });
     }]);
 })();

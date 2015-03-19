@@ -53,7 +53,7 @@ module.exports = {
                                                 actionTo.push(users[i]._id);
                                             }
                                         }
-                                        Action.insert({type: "request", from: {name: sess.name, username: sess.username}, to: actionTo, text: actionText, created: new Date()}, function(err, action){
+                                        Action.insert({read: [], type: "request", from: {name: sess.name, username: sess.username}, to: actionTo, text: actionText, created: new Date()}, function(err, action){
                                             if(err) throw err;
                                             cb({conv: conv, action: action[0]});
                                         });

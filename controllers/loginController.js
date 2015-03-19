@@ -75,7 +75,7 @@ module.exports = {
                     if(err) throw err;
                     Conv.find({users: {$elemMatch: {username: ses.username}}, 'rejected.username': {$ne: ses.username}, 'deleted.username': {$ne: ses.username}}).toArray(function(err, convs){
                         if(err) throw err;
-                        Action.find({to: {$in: [ses.user]}}).toArray(function(err, actions){
+                        Action.find({"from.name": {$ne: ses.name}, to: {$in: [ses.user]}, read: {$nin: [ses.user]}}).toArray(function(err, actions){
                             if(err) throw err;
                             return cb({status: true, user: user, conv: convs, actions: actions});
                         });

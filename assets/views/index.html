@@ -20,6 +20,7 @@
         <script type="text/javascript" src="/js/app.loginController.js"></script>
         <script type="text/javascript" src="/js/app.postController.js"></script>
         <script type="text/javascript" src="/js/app.messageController.js"></script>
+        <script type="text/javascript" src="/js/app.actionController.js"></script>
         <script type="text/javascript" src="/js/app.angular.js"></script>
         <div id="not">
             <div id="Err">This is an Err preview</div>
@@ -33,11 +34,11 @@
 			{{user.name}} @{{user.username}}
 			<div id="newPostButton">+</div>
 			&emsp;
-			<div class="topRight">
+			<div class="topRight" ng-controller="actionController as act" ng-click="act.showNots()">
 				{{actions.length}}!
 			</div>
 		</div>
-		<div id="searchResults">
+		<div id="searchResults" ng-controller="actionController as act">
 				<div ng-repeat="action in actions" class="action">
 					{{action.text}}
 				</div>
