@@ -1,8 +1,12 @@
 var db = require("./mongo.js");
+
+//Controllers
 var login = require("./controllers/loginController.js");
 var post = require("./controllers/postController.js");
 var message = require("./controllers/messageController.js");
+var action = require("./controllers/actionController.js");
 
+//Express settings
 var express = require("express"),
     app = express(),
     socket = require("socket.io"),
@@ -19,12 +23,17 @@ app.get('/', function(req, res){
     res.render('index.html');
 });
 
+//Start the server
 db.mongoclient.open(function(err, mongoclient) {
     if(err) throw err;
-    server.listen(82);
-    console.log("Server started");
+    var port = process.argv[2];
+    if(!port) port = 8080; 
+    server.listen(port);
+    console.log("Server started on port "+port);
 });
 
+
+//All the Socket connections
 io.on('connection', function(socket){
     socket.on("signUp", function(data){
         console.log("signing up");
@@ -42,7 +51,7 @@ io.on('connection', function(socket){
                //each conversation has a channel for talking
                if(data.status){
                     socket.join("user"+data.user._id);
-                    socket.emit('auth', {status: data.status, user: data.user});
+                    socket.emit('auth', {status: data.status, user: data.user, actions: data.actions});
                     socket.emit("convs", data.conv);
                }else{
                     socket.emit('auth', {status: data.status});
@@ -78,8 +87,11 @@ io.on('connection', function(socket){
             if(data.err){
                 return socket.emit("request", data);
             }else{
-                for(var i=0;i<data[0].users.length;i++){
-                    io.to("user"+data[0].users[i]._id).emit("convs", data);
+                for(var i=0;i<data.conv[0].users.length;i++){
+                    io.to("user"+data.conv[0].users[i]._id).emit("convs", data.conv);
+                }
+                for(var i=0;i<data.action.to.length;i++){
+                    io.to("user"+data.action.to[i]).emit("action", data.action);
                 }
             }
         });
@@ -129,6 +141,16 @@ io.on('connection', function(socket){
             io.to("conv"+data[0].conv).emit("newMess", data[0]);
         });
     });
+    
+    //Action Controller sockets
+    socket.on("showNots", function(data){
+        console.log("this");
+        action.showNots(data, function(data){
+            console.log("Notifications seen");
+            socket.emit("showNots", data)
+        });
+    });
+    
     socket.on("disconnect", function(data){
         /*db.db.collection('session').remove({socket: socket.id}, function(err, sess){
             if(err) throw err;

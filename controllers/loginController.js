@@ -67,6 +67,7 @@ module.exports = {
         });
     },auth: function(data, cb){
         var Conv = db.db.collection("conversation");
+        var Action = db.db.collection("action");
         db.db.collection('session').findOne({cookie: data}, function(err, ses){
             if(err) throw err;
             if(ses){
@@ -74,7 +75,10 @@ module.exports = {
                     if(err) throw err;
                     Conv.find({users: {$elemMatch: {username: ses.username}}, 'rejected.username': {$ne: ses.username}, 'deleted.username': {$ne: ses.username}}).toArray(function(err, convs){
                         if(err) throw err;
-                        return cb({status: true, user: user, conv: convs});
+                        Action.find({"from.name": {$ne: ses.name}, to: {$in: [ses.user]}, read: {$nin: [ses.user]}}).toArray(function(err, actions){
+                            if(err) throw err;
+                            return cb({status: true, user: user, conv: convs, actions: actions});
+                        });
                     });
                 });
             }else{

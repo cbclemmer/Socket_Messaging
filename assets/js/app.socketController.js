@@ -97,9 +97,11 @@
         */
         socket.on("auth", function(data) {
             if(data.status&&!rs.auth){
+                console.log(data);
                 rs.user = data.user;
                 rs.auth = true;
                 rs.page = "home";
+                rs.actions = data.actions;
                 window.location.hash = rs.page;
             }
         });
@@ -160,6 +162,22 @@
                     rs.messages.push(data);
                 }    
             }
+        });
+        socket.on("action", function(data){
+            if(data.err) return showErr(data.err);
+            showInfo(data.text);
+            if(data.from.name!=rs.user.name){
+                return rs.actions.push(data);
+            }
+        });
+        /*
+            Socket Controller
+        */
+        socket.on("showNots", function(data){
+           if(data.err) return showErr(data.err);
+           setTimeout(function(){
+               rs.actions = [];
+           }, 5000);
         });
     }]);
 })();
