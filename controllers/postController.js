@@ -89,6 +89,7 @@ module.exports = {
     validate: function(data, cb){
         var sess = db.db.collection("session");
         var Conv = db.db.collection("conversation");
+        
         sess.findOne({cookie: data.cookie}, function(err, sess){
             if(err) throw err;
             if(sess){

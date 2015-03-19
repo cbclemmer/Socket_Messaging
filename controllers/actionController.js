@@ -17,7 +17,6 @@ module.exports = {
                 //console.log(ses);
                 Action.update({to: {$in: [new db.objectID(ses.user)] } }, {$push: { read: ses.user}}, function(err, act){
                     if(err) throw err;
-                    console.log(act);
                     cb({status: true});
                 });
             }else{
