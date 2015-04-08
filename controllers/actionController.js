@@ -7,12 +7,21 @@ var db = require("../mongo.js");
 module.exports = {
     showNots: 
     {
-        description: "Show that the user has read their notifications",
-        inputs: {
+        description: "Show that the user has read their notifications.",
+        
+        inputs: 
+        {
             data: "Contains the authentication cookie",
             cb: "callback"
         },
-        fn: function(inputs)
+        
+        exits: 
+        {
+            success: "All of the users notifications are marked as read",
+            notAutheticated: "User is not autheticated", 
+        },
+        
+        fn: function(inputs, exits)
         {
             //declare collections
             var Sess = db.db.collection("session");
@@ -24,10 +33,10 @@ module.exports = {
                 if(ses){
                     Action.update({to: {$in: [new db.objectID(ses.user)] } }, {$push: { read: ses.user}}, function(err, act){
                         if(err) throw err;
-                        inputs.cb(null);
+                        exits.success({});
                     });
                 }else{
-                    return inputs.cb({err: "You are not authenticated"});
+                    return exits.notAutheticated();
                 }
             })
         }

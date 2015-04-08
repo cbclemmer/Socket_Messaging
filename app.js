@@ -135,12 +135,17 @@ im.io.on('connection', function(socket){
     socket.on("showNots", function(data){
         im.action.showNots(
         {
-            data: data, 
-            cb: function(err)
+            data: data
+        }, 
+        {
+            success: function(results)
             {
-                if(err) return socket.emit("error", "Notification error");
                 console.log("Notifications seen");
-                socket.emit("showNots", {});
+                socket.emit("showNots", results);
+            },
+            notAutheticated: function()
+            {
+                socket.emit("error", "You are not autheticated");
             }
         });
     });
