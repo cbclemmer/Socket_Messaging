@@ -22,7 +22,6 @@ im.db.mongoclient.open(function(err, mongoclient) {
     console.log("Server started on port "+port);
 });
 
-
 //All the Socket connections
 im.io.on('connection', function(socket){
     socket.on("signUp", function(data){
@@ -134,10 +133,14 @@ im.io.on('connection', function(socket){
     
     //Action Controller sockets
     socket.on("showNots", function(data){
-        console.log("this");
-        im.action.showNots(data, function(data){
-            console.log("Notifications seen");
-            socket.emit("showNots", data)
+        im.action.showNots(
+        {
+            data: data, 
+            cb: function(data)
+            {
+                console.log("Notifications seen");
+                socket.emit("showNots", data)
+            }
         });
     });
     
