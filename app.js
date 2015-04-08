@@ -136,10 +136,11 @@ im.io.on('connection', function(socket){
         im.action.showNots(
         {
             data: data, 
-            cb: function(data)
+            cb: function(err)
             {
+                if(err) return socket.emit("error", "Notification error");
                 console.log("Notifications seen");
-                socket.emit("showNots", data)
+                socket.emit("showNots", {});
             }
         });
     });

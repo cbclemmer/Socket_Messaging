@@ -24,7 +24,7 @@ module.exports = {
                 if(ses){
                     Action.update({to: {$in: [new db.objectID(ses.user)] } }, {$push: { read: ses.user}}, function(err, act){
                         if(err) throw err;
-                        inputs.cb({status: true});
+                        inputs.cb(null);
                     });
                 }else{
                     return inputs.cb({err: "You are not authenticated"});

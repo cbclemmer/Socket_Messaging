@@ -174,10 +174,12 @@
             Socket Controller
         */
         socket.on("showNots", function(data){
-           if(data.err) return showErr(data.err);
            setTimeout(function(){
                rs.actions = [];
            }, 5000);
+        });
+        socket.on("error", function(data){
+           showErr(data); 
         });
     }]);
 })();
