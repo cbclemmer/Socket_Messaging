@@ -106,8 +106,7 @@
             }
         });
         socket.on("signUp", function(data){
-            if(data.err) return showErr(data.err);
-            showInfo(data.status);
+            showInfo(data);
         });
         socket.on('login', function(data) {
             if(data.err){
@@ -178,7 +177,7 @@
                rs.actions = [];
            }, 5000);
         });
-        socket.on("error", function(data){
+        socket.on("errorr", function(data){
            showErr(data); 
         });
     }]);

@@ -5,34 +5,56 @@
 var db = require("../mongo.js");
 
 module.exports = {
-    signUp: function(data, cb){
-        if(!data.username||!data.email||!data.password||!data.name||!data){
-            return cb({err: "Form incomplete"});
-        }
-        data.email = data.email.toLowerCase();
-        //validate everything was inputted correctly.
-        var err = false;
-        err  = (data.username.search(" ")!=-1||data.username.search(",")!=-1||data.username.search("<")!=-1) ? "Usernames cannot contain spaces or commas" : false;
-        err = (data.password.length<8) ? "Password must be at least eight characters" : false;
-        if(err) return cb({err: err});
-        var User = db.db.collection('user');
-        //determine if their is already that username or email in the database
-        User.findOne({$or: [{email: data.email}, {username: data.username}]}, {username: true, email: true}, function(err, user){
-            if(err)  throw err;
-            if(!user){
-                User.insert(data, function(err, user){
-                    if(err) throw err;
-                    return cb({status: "Signed up succesfully, please log in"});
-                });
-            }else{
-                if(user.username==data.username){
-                    return cb({err: "Username taken"});
-                }else if(user.email==data.email){
-                    return cb({err: "Email taken"});
-                }
+    signUp: 
+    {
+        description: "Registers the user. This creates a new user in the database",
+        inputs: 
+        {
+            username: "username",
+            email: "name@email.com",
+            password: "password",
+            name: "firstname lastname",
+        },
+        exits: 
+        {
+            success: "User has succesfully signed up",
+            fromIncomplete: "The form was not filled out completely",
+            whitespace: "The username contains an illegal character",
+            password: "Password was not at least 8 characters",
+            unTaken: "The username has already been used",
+            emailTaken: "The email has already been registered with another account",
+        },
+        fn: function(inputs, exits){
+            var User = db.db.collection('user');
+            
+            if(!inputs.username||!inputs.email||!inputs.password||!inputs.name||!inputs){
+                return exits.formIncomplete();
             }
-        });
-    },login: function(data, cb){ 
+            inputs.email = inputs.email.toLowerCase();
+            //validate everything was inputted correctly.
+            if(inputs.username.search(" ")!=-1||inputs.username.search(",")!=-1||inputs.username.search("<")!=-1)
+                return exits.whitespace();
+            else if(inputs.password.length<8)
+                return exits.password();
+            //determine if their is already that username or email in the database
+            User.findOne({$or: [{email: inputs.email}, {username: inputs.username}]}, {username: true, email: true}, function(err, user){
+                if(err)  throw err;
+                if(!user){
+                    User.insert(inputs, function(err, user){
+                        if(err) throw err;
+                        return exits.success();
+                    });
+                }else{
+                    if(user.username==inputs.username){
+                        return exits.unTaken();
+                    }else if(user.email==inputs.email){
+                        return exits.emailTaken();
+                    }
+                }
+            });
+        }
+    },
+    login: function(data, cb){ 
         if(!data.email||!data.pass||!data) return cb({err: "Incomplete data"});
         var User = db.db.collection('user');
         var Session = db.db.collection('session');

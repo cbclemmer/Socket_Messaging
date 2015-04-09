@@ -24,11 +24,24 @@ im.db.mongoclient.open(function(err, mongoclient) {
 
 //All the Socket connections
 im.io.on('connection', function(socket){
+    
+    //Login sockets
     socket.on("signUp", function(data){
         console.log("signing up");
-        im.login.signUp(data, function(data){
-            if(data.err) return socket.emit('signUp', data);
-            socket.emit('signUp', data);
+        im.login.signUp.fn(data, {
+            success: function(data) {
+                socket.emit("signUp", "Signed up succesfully");
+            }, formIncomplete: function() {
+                socket.emit("errorr", "Form was not completed");
+            }, whitespace: function() {
+                socket.emit("errorr", "Username cannot have whitespace");
+            }, password: function() {
+                socket.emit("errorr", "Password must be at least eight characters");
+            }, unTaken: function() {
+                socket.emit("errorr", "Username is already taken");
+            }, emailTaken: function() {
+                socket.emit("errorr", "The email is taken");
+            }
         });
     });
     socket.on("auth", function(data) {
@@ -70,6 +83,8 @@ im.io.on('connection', function(socket){
             socket.emit('logout', data);
         });
     });
+    
+    //message sockets
     socket.on("request", function(data){
         console.log("request");
         im.post.request(data, function(data){
@@ -133,10 +148,10 @@ im.io.on('connection', function(socket){
     
     //Action Controller sockets
     socket.on("showNots", function(data){
-        im.action.showNots(
+        im.action.showNots.fn(
         {
             data: data
-        }, 
+        },  
         {
             success: function(results)
             {
