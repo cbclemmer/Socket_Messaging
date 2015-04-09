@@ -63,6 +63,17 @@ im.io.on('connection', function(socket){
         });
     });
     
+    socket.on("logout", function(data){
+        console.log("logout");
+        im.login.logout.fn({cookie: data}, {
+            success: function(){
+                socket.emit('logout', true);
+            }, notAuth: function(){
+                socket.emit("errorr", "You are not logged in");
+            }
+        });
+    });
+    
     socket.on("auth", function(data) {
         //update the users socket with each page load
         im.db.db.collection('session').update({cookie: data}, {$set: {socket: socket.id}}, function(err, sess){
@@ -78,13 +89,6 @@ im.io.on('connection', function(socket){
                     socket.emit('auth', {status: data.status});
                }
             });
-        });
-    });
-    socket.on("logout", function(data){
-        console.log("logout");
-        im.login.logout(data, function(data){
-            if(data.err) return socket.emit('login', data);
-            socket.emit('logout', data);
         });
     });
     

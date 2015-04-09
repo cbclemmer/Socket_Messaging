@@ -94,17 +94,30 @@ module.exports = {
                 }
             });
         }
-    
-    },logout: function(data, cb){
-        var Session = db.db.collection('session');
-        Session.remove({cookie: data}, function(err, sess){
-            if(err) throw err;
-            if(sess)
-                return cb({status: true});
-            else
-                return cb({err: "Not logged in"});
-        });
-    },auth: function(data, cb){
+        
+    }, logout: {
+        description: "removes the session and prompts the client to destroy the cookie",
+        
+        inputs: {
+            cookie: "The cookie that authenticates the user"
+            
+        }, exits: {
+            success: "The cookie and session are destroyed",
+            notAuth: "The user is not logged in"
+            
+        }, fn: function(inputs, exits){
+            var Session = db.db.collection('session');
+            
+            Session.remove({cookie: inputs.cookie}, function(err, sess){
+                if(err) throw err;
+                if(sess)
+                    return exits.success();
+                else
+                    return exits.notAuth();
+            });
+        }
+        
+    }, auth: function(data, cb){
         var Conv = db.db.collection("conversation");
         var Action = db.db.collection("action");
         db.db.collection('session').findOne({cookie: data}, function(err, ses){
