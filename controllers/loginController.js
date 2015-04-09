@@ -1,6 +1,6 @@
 /*
     This is the Login Controller
-    Module is accessed in app.js by using login.foo()
+    Module is accessed in app.js by using im.login.foo()
 */
 var db = require("../mongo.js");
 
@@ -106,6 +106,7 @@ module.exports = {
             notAuth: "The user is not logged in"
             
         }, fn: function(inputs, exits){
+            
             var Session = db.db.collection('session');
             
             Session.remove({cookie: inputs.cookie}, function(err, sess){
@@ -117,25 +118,40 @@ module.exports = {
             });
         }
         
-    }, auth: function(data, cb){
-        var Conv = db.db.collection("conversation");
-        var Action = db.db.collection("action");
-        db.db.collection('session').findOne({cookie: data}, function(err, ses){
-            if(err) throw err;
-            if(ses){
-                db.db.collection('user').findOne({_id: ses.user}, {username: true, name: true, email: true}, function(err, user){
-                    if(err) throw err;
-                    Conv.find({users: {$elemMatch: {username: ses.username}}, 'rejected.username': {$ne: ses.username}, 'deleted.username': {$ne: ses.username}}).toArray(function(err, convs){
+    }, auth: {
+        description: "Every time the user refreshes the page the server must determine if the user is logged in",
+        
+        inputs: {
+            cookie: "The cookie that authenticates the user",
+            
+        }, exits: {
+            success: "The user is authenticated",
+            notAuth: "The user is not authenticated"
+            
+        }, fn: function(inputs, exits) {
+            
+            var Conv = db.db.collection("conversation");
+            var Action = db.db.collection("action");
+            var Session = db.db.collection("session");
+            var User = db.db.collection("user");
+            
+            Session.findOne({cookie: inputs.cookie}, function(err, ses){
+                if(err) throw err;
+                if(ses){
+                    User.findOne({_id: ses.user}, {username: true, name: true, email: true}, function(err, user){
                         if(err) throw err;
-                        Action.find({"from.name": {$ne: ses.name}, to: {$in: [ses.user]}, read: {$nin: [ses.user]}}).toArray(function(err, actions){
+                        Conv.find({users: {$elemMatch: {username: ses.username}}, 'rejected.username': {$ne: ses.username}, 'deleted.username': {$ne: ses.username}}).toArray(function(err, convs){
                             if(err) throw err;
-                            return cb({status: true, user: user, conv: convs, actions: actions});
+                            Action.find({"from.name": {$ne: ses.name}, to: {$in: [ses.user]}, read: {$nin: [ses.user]}}).toArray(function(err, actions){
+                                if(err) throw err;
+                                return exits. success({status: true, user: user, conv: convs, actions: actions})
+                            });
                         });
                     });
-                });
-            }else{
-                return cb({status: false});
-            }
-        });
+                }else{
+                    return exits.notAuth();
+                }
+            });
+        }
     }
 }

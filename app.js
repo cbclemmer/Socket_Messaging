@@ -78,16 +78,14 @@ im.io.on('connection', function(socket){
         //update the users socket with each page load
         im.db.db.collection('session').update({cookie: data}, {$set: {socket: socket.id}}, function(err, sess){
             console.log("Authenticating");
-            im.login.auth(data, function(data){
-               if(data.err) return socket.emit('auth', {status: false});
-               //each conversation has a channel for talking
-               if(data.status){
+            im.login.auth.fn({cookie: data}, {
+                success: function(data){
                     socket.join("user"+data.user._id);
                     socket.emit('auth', {status: data.status, user: data.user, actions: data.actions});
                     socket.emit("convs", data.conv);
-               }else{
-                    socket.emit('auth', {status: data.status});
-               }
+                }, notAuth: function(){
+                    socket.emit('auth', {status: false});
+                }
             });
         });
     });
