@@ -7,21 +7,21 @@ var db = require("../mongo.js");
 module.exports = {
     
     signUp: {
-        description: "Registers the user. This creates a new user in the database",
+        description:    "Registers the user. This creates a new user in the database",
         inputs: 
         {
-            username: "username",
-            email: "name@email.com",
-            password: "password",
-            name: "firstname lastname",
+            username:   "username",
+            email:      "name@email.com",
+            password:   "password",
+            name:       "firstname lastname",
         },
         exits: 
         {
-            success: "User has succesfully signed up",
+            success:    "User has succesfully signed up",
             fromIncomplete: "The form was not filled out completely",
             whitespace: "The username contains an illegal character",
-            password: "Password was not at least 8 characters",
-            unTaken: "The username has already been used",
+            password:   "Password was not at least 8 characters",
+            unTaken:    "The username has already been used",
             emailTaken: "The email has already been registered with another account",
         },
         fn: function(inputs, exits){
@@ -55,11 +55,11 @@ module.exports = {
         }
         
     }, login: {
-        description: "Creates a new session and passes a cookie for the user to store for authentication, effectively logging the user in.",
+        description:    "Creates a new session and passes a cookie for the user to store for authentication, effectively logging the user in.",
         
         inputs: {
-            email: "name@email.com",
-            pass: "The attempted password"
+            email:      "name@email.com",
+            pass:       "The attempted password"
             
         }, exits: {
             success:    "The user is logged in and a new session is created",
@@ -96,14 +96,14 @@ module.exports = {
         }
         
     }, logout: {
-        description: "removes the session and prompts the client to destroy the cookie",
+        description:    "removes the session and prompts the client to destroy the cookie",
         
         inputs: {
-            cookie: "The cookie that authenticates the user"
+            cookie:     "The cookie that authenticates the user"
             
         }, exits: {
-            success: "The cookie and session are destroyed",
-            notAuth: "The user is not logged in"
+            success:    "The cookie and session are destroyed",
+            notAuth:    "The user is not logged in"
             
         }, fn: function(inputs, exits){
             
@@ -119,14 +119,14 @@ module.exports = {
         }
         
     }, auth: {
-        description: "Every time the user refreshes the page the server must determine if the user is logged in",
+        description:    "Every time the user refreshes the page the server must determine if the user is logged in",
         
         inputs: {
-            cookie: "The cookie that authenticates the user",
+            cookie:     "The cookie that authenticates the user",
             
         }, exits: {
-            success: "The user is authenticated",
-            notAuth: "The user is not authenticated"
+            success:    "The user is authenticated",
+            notAuth:    "The user is not authenticated"
             
         }, fn: function(inputs, exits) {
             

@@ -138,10 +138,16 @@ im.io.on('connection', function(socket){
     //begin messages sockets
     socket.on("getMessages", function(data){
         var rooms = socket.rooms;
-        im.message.getMessages(data, function(data){
-            console.log("getMessages");
-            socket.join("conv"+data.conv);
-            socket.emit("getMessages", data.messages);
+        im.message.getMessages.fn(data, {
+            success: function(data) {
+                console.log("getMessages");
+                socket.join("conv"+data.conv);
+                socket.emit("getMessages", data.messages);
+            }, permission: function() {
+                socket.emit("errorr", "You do not have permission to access this conversation");
+            }, notAuth: function() {
+                socket.emit("errorr", "You are not authenticated");
+            }
         });
     });
     socket.on("newMess", function(data){
