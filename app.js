@@ -44,6 +44,25 @@ im.io.on('connection', function(socket){
             }
         });
     });
+    
+    socket.on("login", function(data){
+        data.socket = socket.id;
+        console.log("login");
+        
+        im.db.db.collection('session').update({cookie: data.cookie}, {$set: {socket: socket.id}}, function(err, sess){
+            im.login.login.fn(data, {
+                success: function(data) {
+                    socket.join("user"+data.status._id);
+                    socket.emit('login', {status: data.status, user: data.status, cookie: data.cookie});
+                }, incomplete: function() {
+                    socket.emit("errorr", "Form incomplete");
+                }, match: function() {
+                    socket.emit("errorr", "Email and password do not match");
+                }
+            });
+        });
+    });
+    
     socket.on("auth", function(data) {
         //update the users socket with each page load
         im.db.db.collection('session').update({cookie: data}, {$set: {socket: socket.id}}, function(err, sess){
@@ -58,21 +77,6 @@ im.io.on('connection', function(socket){
                }else{
                     socket.emit('auth', {status: data.status});
                }
-            });
-        });
-    });
-    socket.on("login", function(data){
-        data.socket = socket.id;
-        console.log("login");
-        im.db.db.collection('session').update({cookie: data.cookie}, {$set: {socket: socket.id}}, function(err, sess){
-            im.login.login(data, function(data){
-               //each conversation has a channel for talking
-                if(!data.err){
-                    socket.join("user"+data.status._id);
-                    socket.emit('login', {status: data.status, user: data.status, cookie: data.cookie});
-                }else{
-                    socket.emit("login", {err: data.err});
-                }
             });
         });
     });

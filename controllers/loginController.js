@@ -5,8 +5,8 @@
 var db = require("../mongo.js");
 
 module.exports = {
-    signUp: 
-    {
+    
+    signUp: {
         description: "Registers the user. This creates a new user in the database",
         inputs: 
         {
@@ -53,31 +53,48 @@ module.exports = {
                 }
             });
         }
-    },
-    login: function(data, cb){ 
-        if(!data.email||!data.pass||!data) return cb({err: "Incomplete data"});
-        var User = db.db.collection('user');
-        var Session = db.db.collection('session');
-        var Conv = db.db.collection("conversation");
-        data.email = data.email.toLowerCase();
-        User.findOne({email: data.email, password: data.pass}, {email: true, name: true, username: true}, function(err, user){
-            if(err) throw err;
-            if(!user){
-                return cb({err: "Email or password did not match"});
-            }
-            else{
-                Session.remove({user: user._id}, function(err, sess){
-                   var cookie = user._id+require("randomstring").generate();
-                    Session.insert({user: user._id, socket: data.socket, cookie: cookie, username: user.username, name: user.name, created: (new Date())}, function(err, ses){
-                        if(err) throw err;
-                        Conv.find({users: {$elemMatch: {username: ses.username}}, 'rejected.username': {$ne: ses.username}, 'deleted.username': {$ne: ses.username}}).toArray(function(err, convs){
+        
+    }, login: {
+        description: "Creates a new session and passes a cookie for the user to store for authentication, effectively logging the user in.",
+        
+        inputs: {
+            email: "name@email.com",
+            pass: "The attempted password"
+            
+        }, exits: {
+            success:    "The user is logged in and a new session is created",
+            incomplete: "The form was not completed",
+            match:      "The email and password did not match",
+            
+        }, fn: function(inputs, exits){
+            //determines if the form is complete
+            if(!inputs.email||!inputs.pass||!inputs) return exits.incomplete();
+        
+            var User = db.db.collection('user');
+            var Session = db.db.collection('session');
+            var Conv = db.db.collection("conversation");
+            
+            inputs.email = inputs.email.toLowerCase();
+            User.findOne({email: inputs.email, password: inputs.pass}, {email: true, name: true, username: true}, function(err, user){
+                if(err) throw err;
+                if(!user){
+                    return exits.match();
+                }
+                else{
+                    Session.remove({user: user._id}, function(err, sess){
+                       var cookie = user._id+require("randomstring").generate();
+                        Session.insert({user: user._id, socket: inputs.socket, cookie: cookie, username: user.username, name: user.name, created: (new Date())}, function(err, ses){
                             if(err) throw err;
-                            return cb({status: user, cookie: cookie, conv: convs});
-                        });
-                    }); 
-                });
-            }
-        });
+                            Conv.find({users: {$elemMatch: {username: ses.username}}, 'rejected.username': {$ne: ses.username}, 'deleted.username': {$ne: ses.username}}).toArray(function(err, convs){
+                                if(err) throw err;
+                                return exits.success({status: user, cookie: cookie, conv: convs})
+                            });
+                        }); 
+                    });
+                }
+            });
+        }
+    
     },logout: function(data, cb){
         var Session = db.db.collection('session');
         Session.remove({cookie: data}, function(err, sess){
