@@ -22,6 +22,7 @@ module.exports = {
             fromIncomplete: "The form was not filled out completely",
             whitespace: "The username contains an illegal character",
             password:   "Password was not at least 8 characters",
+            notEmail:   "Email is not formatted properly",
             unTaken:    "The username has already been used",
             emailTaken: "The email has already been registered with another account",
         },
@@ -37,6 +38,8 @@ module.exports = {
                 return exits.whitespace();
             else if(inputs.password.length<8)
                 return exits.password();
+            else if(inputs.email.search("@")==-1)
+                return exits.notEmail();
             //determine if their is already that username or email in the database
             User.findOne({$or: [{email: inputs.email}, {username: inputs.username}]}, {username: true, email: true}, function(err, user){
                 if(err)  throw err;

@@ -37,6 +37,8 @@ im.io.on('connection', function(socket){
                 socket.emit("errorr", "Username cannot have whitespace");
             }, password: function() {
                 socket.emit("errorr", "Password must be at least eight characters");
+            }, notEmail: function(){
+                socket.emit("errorr", "Email is not formatted correctly");
             }, unTaken: function() {
                 socket.emit("errorr", "Username is already taken");
             }, emailTaken: function() {
