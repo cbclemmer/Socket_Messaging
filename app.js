@@ -128,21 +128,28 @@ im.io.on('connection', function(socket){
         });
     });
     socket.on("reject", function(data){
-        im.post.reject(data, function(data){
-            if(!data.err){
+        im.post.reject.fn(data, {
+            success: function(data){
                 for(var i=0;i<data.users.length;i++){
                     im.io.to("user"+data.users[i]._id).emit("reject", data);
                 }
-            }else{
-                socket.emit("reject", data);
+            }, notAuth: function(){
+                socket.emit("errorr", "Not logged in");
+            }, conv: function(){
+                socket.emit("errorr", "Conversation already rejected");
             }
-            
         });
     });
     socket.on("delet", function(data){
         socket.leave("conv"+data.conv);
-        im.post.delet(data, function(data){
-            socket.emit("delet", data);
+        im.post.delet.fn(data, {
+            success: function(data) {
+                socket.emit("delet", data);
+            }, notAuth: function(){
+                socket.emit("errorr", "Not logged in");
+            }, conv: function(){
+                socket.emit("errorr", "Conversation already rejected");
+            }
         });
     });
     //begin messages sockets

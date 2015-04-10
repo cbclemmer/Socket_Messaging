@@ -92,16 +92,6 @@ module.exports = {
             });
         }
         
-    }, logintest: function(data, cb){
-        var sess = db.db.collection("session");
-        sess.findOne({cookie: data.cookie}, function(err, sess){
-            if(err) throw err;
-            if(sess){
-                
-            }else{
-                return cb({err: "Not logged in"});
-            }
-        });
     }, validate: {
         description:    "Validates a users conversation request",
         
@@ -143,61 +133,98 @@ module.exports = {
             }
             });
         }
-    },  reject: function(data, cb){
+    }, reject: {
+        description: "rejects the proposed conversation and removes it from sight",
+        
+        inputs: {
+            cookie:     "The cookie that authenticates the user",
+            conv:       "The ID of the conversation that you are rejecting"
+            
+        }, exits: {
+            success:    "The conversation was rejected",
+            notAuth:    "User is not logged in",
+            conv:       "either the conversation does not exist or it is already rejected"
+            
+        }, fn: function(inputs, exits) {
+            var sess = db.db.collection("session");
+            var Conv = db.db.collection("conversation");
+            
+            sess.findOne({cookie: inputs.cookie}, function(err, sess){
+                if(err) throw err;
+                if(sess){
+                    Conv.update({_id: new db.objectID(inputs.conv), 'rejected.username': {$ne: sess.username}}, {$push: {rejected: {
+                        _id: sess._id,
+                        username: sess.username,
+                        name: sess.name
+                    }}}, function(err, conv){
+                        if(err) throw err;
+                        if(conv){
+                            Conv.findOne({_id: new db.objectID(inputs.conv)}, function(err, conv) {
+                                if(err) throw err;
+                                conv.reject = sess._id;
+                                Conv.remove({rejected: {$size: (conv.users.length-1)}}, function(err, conv2){
+                                    if(err) throw err;
+                                    return exits.success(conv);
+                                });
+                            });
+                        }else{
+                            return exits.conv();
+                        }
+                    });
+                }else{
+                    return exits.notAuth();
+                }
+            });
+        }
+    }, 
+    delet: {
+        description:    "Deletes a conversation",
+        
+        inputs: {
+            cookie:     "The cookie that authenticates the user",
+            conv:       "The ID of the conversation that you are deleting"
+            
+        }, exits: {
+            success:    "conversation was deleted",
+            notAuth:    "User is not logged in",
+            conv:       "The conversation does not exist"
+            
+        }, fn: function(inputs, exits) {
+            var sess = db.db.collection("session");
+            var Conv = db.db.collection("conversation");
+            sess.findOne({cookie: inputs.cookie}, function(err, sess){
+                if(err) throw err;
+                if(sess){
+                    Conv.update({_id: new db.objectID(inputs.conv), 'deleted.username': {$ne: sess.username}}, {$push: {deleted: {
+                        _id: sess.user,
+                        name: sess.name,
+                        username: sess.username
+                    }}}, function(err, conv){
+                        if(err) throw err;
+                        if(conv){
+                            Conv.findOne({_id: new db.objectID(inputs.conv)}, function(err, conv){
+                                if(err) throw err;
+                                conv.delet = sess.user;
+                                Conv.remove({deleted: {$size: (conv.users.length)}}, function(err, conv2){
+                                    if(err) throw err;
+                                    return exits.success(conv);
+                                });
+                            });
+                        }else{
+                            return exits.conv();
+                        }
+                    });
+                }else{
+                    return exits.notAuth();
+                }
+            });
+        }
+    }, logintest: function(data, cb){
         var sess = db.db.collection("session");
-        var Conv = db.db.collection("conversation");
         sess.findOne({cookie: data.cookie}, function(err, sess){
             if(err) throw err;
             if(sess){
-                Conv.update({_id: new db.objectID(data.conv), 'rejected.username': {$ne: sess.username}}, {$push: {rejected: {
-                    _id: sess._id,
-                    username: sess.username,
-                    name: sess.name
-                }}}, function(err, conv){
-                    if(err) throw err;
-                    if(conv){
-                        Conv.findOne({_id: new db.objectID(data.conv)}, function(err, conv) {
-                            if(err) throw err;
-                            conv.reject = sess._id;
-                            Conv.remove({rejected: {$size: (conv.users.length-1)}}, function(err, conv2){
-                                if(err) throw err;
-                                cb(conv);
-                            });
-                        });
-                    }else{
-                        return cb({err: "Internal error, could not find conversation or is already rejected"});
-                    }
-                });
-            }else{
-                return cb({err: "Not logged in"});
-            }
-        });
-    },
-    delet: function(data, cb){
-        var sess = db.db.collection("session");
-        var Conv = db.db.collection("conversation");
-        sess.findOne({cookie: data.cookie}, function(err, sess){
-            if(err) throw err;
-            if(sess){
-                Conv.update({_id: new db.objectID(data.conv), 'deleted.username': {$ne: sess.username}}, {$push: {deleted: {
-                    _id: sess.user,
-                    name: sess.name,
-                    username: sess.username
-                }}}, function(err, conv){
-                    if(err) throw err;
-                    if(conv){
-                        Conv.findOne({_id: new db.objectID(data.conv)}, function(err, conv){
-                            if(err) throw err;
-                            conv.delet = sess.user;
-                            Conv.remove({deleted: {$size: (conv.users.length)}}, function(err, conv2){
-                                if(err) throw err;
-                                cb(conv);
-                            });
-                        });
-                    }else{
-                        return cb({err: "Internal error, could not find conversation or is already deleted"});
-                    }
-                });
+                
             }else{
                 return cb({err: "Not logged in"});
             }
