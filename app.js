@@ -159,7 +159,7 @@ im.io.on('connection', function(socket){
         });
     });
     socket.on("newMess", function(data){
-        im.message.newMess(data, {
+        im.message.newMess.fn(data, {
             success: function(data){
                 console.log("newMess");
                 im.io.to("conv"+data[0].conv).emit("newMess", data[0]);
