@@ -164,8 +164,8 @@
         });
         socket.on("action", function(data){
             if(data.err) return showErr(data.err);
-            showInfo(data.text);
             if(data.from.name!=rs.user.name){
+                showInfo(data.text);
                 return rs.actions.push(data);
             }
         });
