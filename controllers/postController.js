@@ -29,7 +29,7 @@ module.exports = {
         }, exits: {
             success:    "Request is submitted",
             notAuth:    "User is not authenticated",
-            nUsers:      "Could not find the users for group conversation",
+            nUsers:     "Could not find the users for group conversation",
             nUser:      "Could not find the user for one to one conversation",
             convStarted:"Conversation is already started",
             selfConv:   "User has entered their username as the target"
@@ -102,36 +102,48 @@ module.exports = {
                 return cb({err: "Not logged in"});
             }
         });
-    },
-    validate: function(data, cb){
-        var sess = db.db.collection("session");
-        var Conv = db.db.collection("conversation");
+    }, validate: {
+        description:    "Validates a users conversation request",
         
-        sess.findOne({cookie: data.cookie}, function(err, sess){
-            if(err) throw err;
-            if(sess){
-                // Make sure it is that conversation, and it has not already been validated
-                Conv.update({_id: new db.objectID(data.conv), 'validated.username': {$ne: sess.username}}, {$push: {validated: {
-                    _id: sess._id,
-                    username: sess.username,
-                    name: sess.name
-                }}}, function(err, conv){
-                    if(err) throw err;
-                    if(conv){
-                        Conv.findOne({_id: new db.objectID(data.conv)}, function(err, conv) {
-                            if(err) throw err;
-                            cb({conv: conv, user: sess.username});
+        inputs: {
+            cookie:     "The cookie that authenticates the user",
+            conv:       "The ID of the conversation that you are validating"
+            
+        }, exits: {
+            success:    "The conversation was validated",
+            notAuth:    "The user is not logged in",
+            conv:       "Could not find the conversation or it is already started",
+            
+            
+        }, fn: function(inputs, exits) {
+            var sess = db.db.collection("session");
+            var Conv = db.db.collection("conversation");
+        
+            sess.findOne({cookie: inputs.cookie}, function(err, sess){
+                if(err) throw err;
+                if(sess){
+                    // Make sure it is that conversation, and it has not already been validated
+                    Conv.update({_id: new db.objectID(inputs.conv), 'validated.username': {$ne: sess.username}}, {$push: {validated: {
+                        _id: sess._id,
+                        username: sess.username,
+                        name: sess.name
+                    }}}, function(err, conv){
+                        if(err) throw err;
+                        if(conv){
+                            Conv.findOne({_id: new db.objectID(inputs.conv)}, function(err, conv) {
+                                if(err) throw err;
+                                return exits.success({conv: conv, user: sess.username});
                         });
                     }else{
-                        return cb({err: "Internal error, could not find conversation or is already validated"});
+                        return exits.conv();
                     }
                 });
             }else{
-                return cb({err: "Not logged in"});
+                return exits.notAuth();
             }
-        });
-    },
-    reject: function(data, cb){
+            });
+        }
+    },  reject: function(data, cb){
         var sess = db.db.collection("session");
         var Conv = db.db.collection("conversation");
         sess.findOne({cookie: data.cookie}, function(err, sess){

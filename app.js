@@ -115,13 +115,15 @@ im.io.on('connection', function(socket){
         });
     });
     socket.on("validate", function(data) {
-        im.post.validate(data, function(data){
-            if(data.err){
-                return socket.emit("request", data);
-            }else{
+        im.post.validate.fn(data, {
+            success: function(data){
                 for(var i=0;i<data.conv.users.length;i++){
                     im.io.to("user"+data.conv.users[i]._id).emit("validate", data);
                 }
+            }, notAuth: function(){
+                socket.emit("errorr", "Not logged in");
+            }, conv: function(){
+                socket.emit("error", "Conversation already started");
             }
         });
     });
