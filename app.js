@@ -151,10 +151,17 @@ im.io.on('connection', function(socket){
         });
     });
     socket.on("newMess", function(data){
-        im.message.newMess(data, function(data){
-            console.log("newMess");
-            if(data.err) return socket.emit("newMess", data);
-            im.io.to("conv"+data[0].conv).emit("newMess", data[0]);
+        im.message.newMess(data, {
+            success: function(data){
+                console.log("newMess");
+                im.io.to("conv"+data[0].conv).emit("newMess", data[0]);
+            }, markup: function() {
+                socket.emit("errorr", "You cannot send a message with an < in it");
+            }, permission: function() {
+                socket.emit("errorr", "You do not have permission to post here");
+            }, notAuth: function() {
+                socket.emit("errorr", "You are not logged in");
+            }
         });
     });
     

@@ -40,29 +40,47 @@ module.exports = {
                 }
             });
         }
-    }, newMess: function(data, cb){
-        var sess = db.db.collection("session");
-        var Mess = db.db.collection('message');
-        var Conv = db.db.collection("conversation");
-        if(data.mess.search("<")!=-1) return cb({err: "Message cannot have a '<' in it"});
-        sess.findOne({cookie: data.cookie}, function(err, sess){
-            if(err) throw err;
-            if(sess){
-                //find the conversation and make sure this user is a part of it
-                Conv.findOne({_id: (new db.objectID(data.conv)), 'users._id': (new db.objectID(sess.user))}, function(err, conv){
-                   if(err)  throw err;
-                   if(conv){
-                       Mess.insert({conv: conv._id, content: data.mess, username: sess.username}, function(err, mess){
-                           if(err) throw err;
-                           cb(mess);
-                       });
-                   }else{
-                       cb({err: 'you do not have acces to this conversation'});
-                   }
-                });
-            }else{
-                return cb({err: "Not logged in"});
-            }
-        });
+        
+    }, newMess: {
+        description: "Creates a new message",
+        
+        inputs: {
+            cookie: "The cookie that authenticates the user",
+            mess: "The text of the message",
+            conv: "The ID of the conversation being posted to"
+            
+        }, exits: {
+            success: "The message was created",
+            markup: "The message had a '<' in it. This is so that users don't try to implement code in the message",
+            permission: "The user does not have permission to post to the conversation",
+            notAuth: "The user is not logged in"
+            
+        }, fn: function(inputs, exits) {
+            var sess = db.db.collection("session");
+            var Mess = db.db.collection('message');
+            var Conv = db.db.collection("conversation");
+            
+            if(inputs.mess.search("<")!=-1) return exits.markup();
+            
+            sess.findOne({cookie: inputs.cookie}, function(err, sess){
+                if(err) throw err;
+                if(sess){
+                    //find the conversation and make sure this user is a part of it
+                    Conv.findOne({_id: (new db.objectID(inputs.conv)), 'users._id': (new db.objectID(sess.user))}, function(err, conv){
+                       if(err)  throw err;
+                       if(conv){
+                           Mess.insert({conv: conv._id, content: inputs.mess, username: sess.username}, function(err, mess){
+                               if(err) throw err;
+                               return exits.success(mess);
+                           });
+                       }else{
+                           return exits.permission();
+                       }
+                    });
+                }else{
+                    return exits.notAuth();
+                }
+            });
+        }
     }
 }
