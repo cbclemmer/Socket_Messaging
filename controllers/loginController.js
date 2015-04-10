@@ -8,6 +8,7 @@ module.exports = {
     
     signUp: {
         description:    "Registers the user. This creates a new user in the database",
+        
         inputs: 
         {
             username:   "username",

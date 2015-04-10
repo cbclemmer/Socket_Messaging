@@ -19,63 +19,80 @@ var db = require("../mongo.js");
 
 
 module.exports = {
-    request: function(data, cb){
-        var User = db.db.collection("user");
-        var Conv = db.db.collection("conversation");
-        var Action = db.db.collection("action");
-        var Sess = db.db.collection("session");
-        //basic auth, id of the user is sess.user
-        Sess.findOne({cookie: data.cookie}, function(err, sess){
-            if(err) throw err;
-            if(sess){
-                    if(data.un[0]==sess.username) return cb({err: "You are making conversation with yourself?"})
-                    var arr = [{username: sess.username}];
-                    for(var i=0;i<data.un.length;i++){
-                        arr.push({username: data.un[i]});
-                    }
-                    User.find({$or: arr}, {username: true, name: true}).toArray(function(err, users){
-                        if(err) throw err;
-                        if(users.length>1){
-                            Conv.findOne({users: users}, function(err, conv){
-                                if(err) throw err;
-                                if(!conv){
-                                    var verified = {
-                                        _id: sess.user,
-                                        username: sess.username,
-                                        name: sess.name
-                                    };
-                                    Conv.insert({users: users, validated: [verified], rejected: [], deleted: [], created: (new Date())}, function(err, conv){
-                                        if(err) throw err;
-                                        var actionText = sess.name + " wants to start a conversation";
-                                        var actionTo = [];
-                                        for(var i = 0;i < users.length;i++){
-                                            if(users[i]._id != sess.user){
-                                                actionTo.push(users[i]._id);
-                                            }
-                                        }
-                                        Action.insert({read: [], type: "request", from: {name: sess.name, username: sess.username}, to: actionTo, text: actionText, created: new Date()}, function(err, action){
-                                            if(err) throw err;
-                                            cb({conv: conv, action: action[0]});
-                                        });
-                                    })
-                                }else{
-                                    cb({err: "Conversation already started"});
-                                }
-                            });
-                        }else{
-                            if(users.length==1){
-                                return cb({err: "User not found"});
-                            }else{
-                                return cb({err: ("Could not find users")});
-                            }
+    request: {
+        description:    "Create a request for a user to start a conversation"  ,
+        
+        inputs: {
+            cookie:     "The cookie that authenticates the user",
+            un:         "The username to request a conversation with",
+            
+        }, exits: {
+            success:    "Request is submitted",
+            notAuth:    "User is not authenticated",
+            nUsers:      "Could not find the users for group conversation",
+            nUser:      "Could not find the user for one to one conversation",
+            convStarted:"Conversation is already started",
+            selfConv:   "User has entered their username as the target"
+            
+        }, fn: function(inputs, exits){
+            var User = db.db.collection("user");
+            var Conv = db.db.collection("conversation");
+            var Action = db.db.collection("action");
+            var Sess = db.db.collection("session");
+        
+            //basic auth, id of the user is sess.user
+            Sess.findOne({cookie: inputs.cookie}, function(err, sess){
+                if(err) throw err;
+                if(sess){
+                        if(inputs.un[0]==sess.username) return exits.selfConv();
+                        var arr = [{username: sess.username}];
+                        for(var i=0;i<inputs.un.length;i++){
+                            arr.push({username: inputs.un[i]});
                         }
-                    });
-            }else{
-                return cb({err: "Not logged in"});
-            }
-        });
-    },
-    logintest: function(data, cb){
+                        User.find({$or: arr}, {username: true, name: true}).toArray(function(err, users){
+                            if(err) throw err;
+                            if(users.length>1){
+                                Conv.findOne({users: users}, function(err, conv){
+                                    if(err) throw err;
+                                    if(!conv){
+                                        var verified = {
+                                            _id: sess.user,
+                                            username: sess.username,
+                                            name: sess.name
+                                        };
+                                        Conv.insert({users: users, validated: [verified], rejected: [], deleted: [], created: (new Date())}, function(err, conv){
+                                            if(err) throw err;
+                                            var actionText = sess.name + " wants to start a conversation";
+                                            var actionTo = [];
+                                            for(var i = 0;i < users.length;i++){
+                                                if(users[i]._id != sess.user){
+                                                    actionTo.push(users[i]._id);
+                                                }
+                                            }
+                                            Action.insert({read: [], type: "request", from: {name: sess.name, username: sess.username}, to: actionTo, text: actionText, created: new Date()}, function(err, action){
+                                                if(err) throw err;
+                                                return exits.success({conv: conv, action: action[0]})
+                                            });
+                                        })
+                                    }else{
+                                        return exits.convStarted();
+                                    }
+                                });
+                            }else{
+                                if(users.length==1){
+                                    return exits.nUser();
+                                }else{
+                                    return exits.nUsers();
+                                }
+                            }
+                        });
+                }else{
+                    return exits.notAuth();
+                }
+            });
+        }
+        
+    }, logintest: function(data, cb){
         var sess = db.db.collection("session");
         sess.findOne({cookie: data.cookie}, function(err, sess){
             if(err) throw err;

@@ -93,16 +93,24 @@ im.io.on('connection', function(socket){
     //message sockets
     socket.on("request", function(data){
         console.log("request");
-        im.post.request(data, function(data){
-            if(data.err){
-                return socket.emit("request", data);
-            }else{
+        im.post.request.fn(data, {
+            success: function(data){
                 for(var i=0;i<data.conv[0].users.length;i++){
                     im.io.to("user"+data.conv[0].users[i]._id).emit("convs", data.conv);
                 }
                 for(var i=0;i<data.action.to.length;i++){
                     im.io.to("user"+data.action.to[i]).emit("action", data.action);
                 }
+            }, notAuth: function() {
+                socket.emit("errorr", "You are not logged in.");
+            }, nUsers: function() {
+                socket.emit("errorr", "The users not found");
+            }, nUser: function() {
+                socket.emit("errorr", "User not found");
+            }, convStarted: function() {
+                socket.emit("errorr", "Conversation already exists");
+            }, selfConv: function() {
+                socket.emit("errorr", "That is your username");
             }
         });
     });
